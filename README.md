@@ -24,6 +24,8 @@ A beautiful, Facebook-style reactions system for Laravel with Livewire. Add cust
 - ⚡ **Optimized Queries** - Efficient database queries with proper indexing
 - 🔒 **Unique Reactions** - One reaction per user per item (can be changed)
 - 📱 **Responsive Design** - Works perfectly on mobile and desktop
+- 🎯 **Smart Positioning** - Intelligent dropdown placement with Alpine.js Anchor plugin
+- 🔄 **Auto-Flip** - Dropdowns automatically reposition to stay within viewport
 
 ---
 
@@ -358,13 +360,17 @@ Reaction::create([
 ### Reaction Picker
 - **Appears:** Above the Like button on hover
 - **Layout:** All reaction emojis in a single horizontal row
-- **Positioning:** Right-aligned to prevent overflow on narrow screens
+- **Smart Positioning:** Uses Alpine.js Anchor plugin for intelligent placement
+  - **Auto-flip:** Automatically repositions to stay within viewport
+  - **Placement:** Prefers top-end (above button, right-aligned)
+  - **Fallback:** Flips to bottom or sides if no space above
+  - **Offset:** 8px gap from button for better spacing
 - **Interactions:**
   - Hover over emoji → Scales up with animation
   - Click emoji → Saves reaction and closes picker
-  - Click outside → Closes picker
-- **Tooltips:** Shows reaction label above each emoji on hover
+  - Hover away → Closes picker automatically
 - **Animations:** Smooth fade-in/out with scale transitions
+- **Accessibility:** ARIA labels and focus rings for keyboard navigation
 
 ### Reaction Count Summary
 - **Display:** Top 3 reaction icons as overlapping circles + total count
@@ -375,26 +381,49 @@ Reaction::create([
 
 ### Reactions List Dropdown
 - **Opens:** When clicking on reaction count summary
-- **Position:** Above the reaction count, left-aligned
-- **Width:** 320px (80 Tailwind units)
+- **Smart Positioning:** Uses Alpine.js Anchor plugin for intelligent placement
+  - **Auto-flip:** Automatically repositions to stay within viewport
+  - **Placement:** Prefers top-start (above button, left-aligned)
+  - **Fallback:** Flips to bottom or sides if no space above
+  - **Offset:** 8px gap from button for better spacing
+- **Width:** Auto-width (min 320px, max 448px) - expands based on content
 - **Features:**
   - **Filterable Tabs:** Switch between "All" and specific reaction types
   - **Active Tab:** Highlighted in blue
   - **Tab Counts:** Shows number of each reaction type
+  - **Tab Wrapping:** Tabs wrap to multiple lines if needed (no horizontal scroll)
   - **User List:**
     - User avatar (first letter in gradient circle)
     - User name
     - Reaction time (e.g., "2 hours ago")
     - Reaction emoji on the right
-  - **Scrollable:** Max height 320px with overflow scroll
+  - **No Scrollbars:** Full height display without vertical scrolling
   - **Click Outside:** Closes dropdown automatically
   - **Hover Effects:** Each user row highlights on hover
+- **Accessibility:** Proper ARIA attributes and keyboard navigation
+
+### Smart Positioning Technology
+- **Powered by:** Alpine.js Anchor plugin (included via CDN)
+- **Benefits:**
+  - Zero configuration required
+  - Automatic viewport detection
+  - Intelligent fallback positioning
+  - No overflow or clipping issues
+  - Works with scrolling and resizing
+  - Lightweight (~2KB)
+- **How it works:**
+  - Monitors button position in real-time
+  - Calculates available space in all directions
+  - Automatically chooses best position
+  - Smoothly transitions between positions
 
 ### Responsive Design
 - Works perfectly on mobile and desktop
 - Touch-friendly button sizes
 - Prevents horizontal scrolling
 - Proper z-index layering for dropdowns
+- Smart positioning adapts to screen size
+- No fixed positioning issues on mobile
 
 ---
 
