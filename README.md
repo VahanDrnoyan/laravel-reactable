@@ -194,11 +194,6 @@ $post->getTotalReactionsCount();  // Returns int
 
 // Get count for specific reaction type
 $post->getReactionsCountByType('like');  // Returns int
-
-// Query scopes
-Post::withReactions()->get();  // Eager load reaction counts
-Post::popular()->get();        // Order by reactions count (desc)
-Post::popular('asc')->get();   // Order by reactions count (asc)
 ```
 
 ### Facade Methods
@@ -255,22 +250,19 @@ Livewire.on('reaction-removed', (data) => {
 
 ### Database Queries
 
-Get posts with most reactions:
+Get posts with specific reactions:
 
 ```php
-// Get top 10 most reacted posts
-$popularPosts = Post::popular()->take(10)->get();
-
-// Get posts with reaction counts
-$posts = Post::withReactions()->get();
-foreach ($posts as $post) {
-    echo $post->reactions_count;
-}
-
 // Get posts with specific reaction
 $lovedPosts = Post::whereHas('reactions', function($query) {
     $query->where('type', 'love');
 })->get();
+
+// Count reactions for a post
+$reactionCount = $post->reactions()->count();
+
+// Get all users who reacted to a post
+$users = $post->reactions()->with('user')->get()->pluck('user');
 ```
 
 ---
