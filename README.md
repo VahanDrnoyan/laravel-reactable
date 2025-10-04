@@ -82,7 +82,7 @@ This creates the `reactions` table with:
 
 ## 📖 Usage
 
-### Add Reactions to Your Models
+### Step 1: Add Reactions to Your Models
 
 Add the `HasReactions` trait to any model you want to be reactable:
 
@@ -97,7 +97,23 @@ class Post extends Model
 }
 ```
 
-### Display the Reactions Component
+### Step 2: Eager Load Reactions (Important!)
+
+**To prevent N+1 queries**, always eager load reactions in your controller:
+
+```php
+public function index()
+{
+    // ✅ CORRECT - Eager load reactions
+    $posts = Post::with(['user', 'reactions'])
+        ->latest()
+        ->paginate(10);
+
+    return view('posts.index', compact('posts'));
+}
+```
+
+### Step 3: Display the Reactions Component
 
 In your Blade views:
 
@@ -105,11 +121,12 @@ In your Blade views:
 <livewire:reactions :model="$post" />
 ```
 
-That's it! The component will display:
-- A "Like" button (or current reaction if user has reacted)
-- Reaction picker on hover/click with all available reactions
-- Reaction count summary with top 3 reaction icons
-- Clickable reaction count that shows who reacted (with filterable tabs)
+**That's it!** The component will automatically:
+- Detect eager-loaded data and use it (no additional queries)
+- Display a "Like" button (or current reaction if user has reacted)
+- Show reaction picker on hover with all available reactions
+- Display reaction count summary with top 3 reaction icons
+- Show clickable reaction count with filterable tabs by reaction type
 
 ---
 
@@ -254,6 +271,44 @@ Livewire.on('reaction-removed', (data) => {
 });
 ```
 
+### Avoiding N+1 Queries
+
+**IMPORTANT:** To prevent N+1 query issues when displaying multiple posts with reactions, always eager load the reactions relationship:
+
+```php
+// ✅ CORRECT - Eager load reactions to avoid N+1
+$posts = Post::with(['user', 'reactions'])
+    ->latest()
+    ->paginate(10);
+
+// ❌ WRONG - Will cause N+1 queries
+$posts = Post::with('user')
+    ->latest()
+    ->paginate(10);
+```
+
+**How It Works:**
+- The Livewire component automatically detects if reactions are eager loaded
+- If eager loaded: Uses the collection data (0 additional queries)
+- If not eager loaded: Falls back to querying (causes N+1)
+
+**Example Controller:**
+```php
+public function index()
+{
+    $posts = Post::with(['user', 'reactions'])
+        ->whereNotNull('published_at')
+        ->latest('published_at')
+        ->paginate(10);
+
+    return view('posts.index', compact('posts'));
+}
+```
+
+**Query Optimization:**
+- **Without eager loading:** 1 + (N posts × 2 queries) = 21+ queries for 10 posts
+- **With eager loading:** 3 queries total (posts, users, reactions)
+
 ### Database Queries
 
 Get posts with specific reactions:
@@ -291,24 +346,55 @@ Reaction::create([
 
 ---
 
-## 🎨 UI Components
+## 🎨 UI Components & Interactions
+
+### Main Like Button
+- **Default State:** Shows thumbs-up icon with "Like" text
+- **After Reacting:** Shows your reaction emoji and label (e.g., "❤️ Love")
+- **Click:** Opens reaction picker (or removes your reaction if already reacted)
+- **Hover Effect:** Background changes to indicate interactivity
+- **Color:** Blue when you've reacted, gray when you haven't
 
 ### Reaction Picker
-- Appears on hover/click above the Like button
-- Shows all available reaction emojis in a horizontal row
-- Smooth animations and hover effects
-- Tooltips showing reaction labels
+- **Appears:** Above the Like button on hover
+- **Layout:** All reaction emojis in a single horizontal row
+- **Positioning:** Right-aligned to prevent overflow on narrow screens
+- **Interactions:**
+  - Hover over emoji → Scales up with animation
+  - Click emoji → Saves reaction and closes picker
+  - Click outside → Closes picker
+- **Tooltips:** Shows reaction label above each emoji on hover
+- **Animations:** Smooth fade-in/out with scale transitions
 
 ### Reaction Count Summary
-- Shows top 3 reaction icons as overlapping circles
-- Displays total reaction count
-- Clickable to open detailed reactions list
+- **Display:** Top 3 reaction icons as overlapping circles + total count
+- **Position:** Left side of the component (opposite of Like button)
+- **Clickable:** Click to open detailed reactions list
+- **Hover Effect:** Background changes to indicate it's clickable
+- **Dynamic:** Only appears when post has reactions
 
 ### Reactions List Dropdown
-- Filterable tabs by reaction type (All, 👍, ❤️, etc.)
-- Shows user avatars, names, and reaction times
-- Scrollable list for many reactions
-- Click outside to close
+- **Opens:** When clicking on reaction count summary
+- **Position:** Above the reaction count, left-aligned
+- **Width:** 320px (80 Tailwind units)
+- **Features:**
+  - **Filterable Tabs:** Switch between "All" and specific reaction types
+  - **Active Tab:** Highlighted in blue
+  - **Tab Counts:** Shows number of each reaction type
+  - **User List:**
+    - User avatar (first letter in gradient circle)
+    - User name
+    - Reaction time (e.g., "2 hours ago")
+    - Reaction emoji on the right
+  - **Scrollable:** Max height 320px with overflow scroll
+  - **Click Outside:** Closes dropdown automatically
+  - **Hover Effects:** Each user row highlights on hover
+
+### Responsive Design
+- Works perfectly on mobile and desktop
+- Touch-friendly button sizes
+- Prevents horizontal scrolling
+- Proper z-index layering for dropdowns
 
 ---
 

@@ -3,14 +3,15 @@
 namespace TrueFans\LaravelReactable\Livewire;
 
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Reactions extends Component
 {
-    public Model $model;
-
+    #[Locked]
     public string $modelType;
 
+    #[Locked]
     public int $modelId;
 
     public array $reactions = [];
@@ -29,12 +30,16 @@ class Reactions extends Component
 
     public function mount(Model $model): void
     {
-        $this->model = $model;
         $this->modelType = get_class($model);
         $this->modelId = $model->id;
         $this->reactionTypes = config('reactable.reaction_types', []);
 
-        $this->loadReactions();
+        $this->loadReactions($model);
+    }
+
+    protected function getModel(): Model
+    {
+        return $this->modelType::find($this->modelId);
     }
 
     public function togglePicker(): void
@@ -72,7 +77,8 @@ class Reactions extends Component
 
     public function loadReactionUsers(): void
     {
-        $query = $this->model->reactions()->with('user')->latest();
+        $model = $this->getModel();
+        $query = $model->reactions()->with('user')->latest();
 
         // Apply filter if selected
         if ($this->selectedReactionFilter) {
@@ -88,27 +94,49 @@ class Reactions extends Component
             ->toArray();
     }
 
-    public function loadReactions(): void
+    public function loadReactions(?Model $model = null): void
     {
         // Initialize reaction counts
         $this->reactions = array_fill_keys(array_keys($this->reactionTypes), 0);
 
-        // Load reactions from database
-        $reactionCounts = $this->model->reactions()
-            ->selectRaw('type, count(*) as count')
-            ->groupBy('type')
-            ->pluck('count', 'type')
-            ->toArray();
+        // Use provided model (from mount) or fetch it
+        $model = $model ?? $this->getModel();
 
-        $this->reactions = array_merge($this->reactions, $reactionCounts);
+        // Use eager loaded reactions if available, otherwise query
+        if ($model->relationLoaded('reactions')) {
+            // Use already loaded reactions (no additional query)
+            $reactionCounts = $model->reactions
+                ->groupBy('type')
+                ->map->count()
+                ->toArray();
 
-        // Check if current user has reacted
-        if (auth()->check()) {
-            $userReaction = $this->model->reactions()
-                ->where('user_id', auth()->id())
-                ->first();
+            $this->reactions = array_merge($this->reactions, $reactionCounts);
 
-            $this->userReaction = $userReaction?->type;
+            // Check if current user has reacted (from loaded data)
+            if (auth()->check()) {
+                $userReaction = $model->reactions
+                    ->firstWhere('user_id', auth()->id());
+
+                $this->userReaction = $userReaction?->type;
+            }
+        } else {
+            // Fallback to querying if not eager loaded
+            $reactionCounts = $model->reactions()
+                ->selectRaw('type, count(*) as count')
+                ->groupBy('type')
+                ->pluck('count', 'type')
+                ->toArray();
+
+            $this->reactions = array_merge($this->reactions, $reactionCounts);
+
+            // Check if current user has reacted
+            if (auth()->check()) {
+                $userReaction = $model->reactions()
+                    ->where('user_id', auth()->id())
+                    ->first();
+
+                $this->userReaction = $userReaction?->type;
+            }
         }
     }
 
@@ -154,7 +182,8 @@ class Reactions extends Component
         }
 
         // Add new reaction
-        $this->model->reactions()->create([
+        $model = $this->getModel();
+        $model->reactions()->create([
             'user_id' => auth()->id(),
             'type' => $type,
         ]);
@@ -176,7 +205,8 @@ class Reactions extends Component
             return;
         }
 
-        $this->model->reactions()
+        $model = $this->getModel();
+        $model->reactions()
             ->where('user_id', auth()->id())
             ->delete();
 
