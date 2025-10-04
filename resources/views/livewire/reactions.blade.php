@@ -80,7 +80,7 @@
 
                 <!-- Reactions List Dropdown -->
                 @if($showReactionsList)
-                    <div class="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50">
+                    <div class="absolute bottom-full left-0 mb-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50">
                         <!-- Tabs for filtering by reaction type -->
                         <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
                             <button
