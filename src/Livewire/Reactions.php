@@ -39,7 +39,7 @@ class Reactions extends Component
 
     public function togglePicker(): void
     {
-        $this->showPicker = !$this->showPicker;
+        $this->showPicker = ! $this->showPicker;
         $this->showReactionsList = false;
     }
 
@@ -50,7 +50,7 @@ class Reactions extends Component
 
     public function toggleReactionsList(): void
     {
-        $this->showReactionsList = !$this->showReactionsList;
+        $this->showReactionsList = ! $this->showReactionsList;
         $this->showPicker = false;
 
         if ($this->showReactionsList) {
@@ -80,7 +80,7 @@ class Reactions extends Component
         }
 
         $this->reactionUsers = $query->get()
-            ->map(fn($reaction) => [
+            ->map(fn ($reaction) => [
                 'user_name' => $reaction->user->name,
                 'type' => $reaction->type,
                 'created_at' => $reaction->created_at->diffForHumans(),

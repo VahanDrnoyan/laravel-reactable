@@ -22,7 +22,7 @@ trait HasReactions
     {
         $user = $user ?? auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             throw new \Exception('User must be authenticated to react.');
         }
 
@@ -43,7 +43,7 @@ trait HasReactions
     {
         $user = $user ?? auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -59,7 +59,7 @@ trait HasReactions
     {
         $user = $user ?? auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -75,7 +75,7 @@ trait HasReactions
     {
         $user = $user ?? auth()->user();
 
-        if (!$user) {
+        if (! $user) {
             return null;
         }
 
