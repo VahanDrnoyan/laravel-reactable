@@ -21,6 +21,12 @@ class Reactions extends Component
 
     public bool $showPicker = false;
 
+    public bool $showReactionsList = false;
+
+    public array $reactionUsers = [];
+
+    public ?string $selectedReactionFilter = null;
+
     public function mount(Model $model): void
     {
         $this->model = $model;
@@ -34,11 +40,52 @@ class Reactions extends Component
     public function togglePicker(): void
     {
         $this->showPicker = !$this->showPicker;
+        $this->showReactionsList = false;
     }
 
     public function closePicker(): void
     {
         $this->showPicker = false;
+    }
+
+    public function toggleReactionsList(): void
+    {
+        $this->showReactionsList = !$this->showReactionsList;
+        $this->showPicker = false;
+
+        if ($this->showReactionsList) {
+            $this->selectedReactionFilter = null; // Reset filter
+            $this->loadReactionUsers();
+        }
+    }
+
+    public function closeReactionsList(): void
+    {
+        $this->showReactionsList = false;
+    }
+
+    public function filterReactionsByType(?string $type): void
+    {
+        $this->selectedReactionFilter = $type;
+        $this->loadReactionUsers();
+    }
+
+    public function loadReactionUsers(): void
+    {
+        $query = $this->model->reactions()->with('user')->latest();
+
+        // Apply filter if selected
+        if ($this->selectedReactionFilter) {
+            $query->where('type', $this->selectedReactionFilter);
+        }
+
+        $this->reactionUsers = $query->get()
+            ->map(fn($reaction) => [
+                'user_name' => $reaction->user->name,
+                'type' => $reaction->type,
+                'created_at' => $reaction->created_at->diffForHumans(),
+            ])
+            ->toArray();
     }
 
     public function loadReactions(): void
