@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace TrueFans\LaravelReactable\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelReactableCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-reactable';
 
     public $description = 'My command';
 

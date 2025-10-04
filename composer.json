@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "vahandr/laravel-reactable",
+    "description": "Reusable user, likes, reactions full stack implementation.",
     "keywords": [
-        ":vendor_name",
+        "TrueFans",
         "laravel",
-        ":package_slug"
+        "laravel-reactable"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/vahandr/laravel-reactable",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "VahanDrnoyan",
+            "email": "v.drnoyan@gmail.com",
             "role": "Developer"
         }
     ],
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "TrueFans\\LaravelReactable\\": "src/",
+            "TrueFans\\LaravelReactable\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "TrueFans\\LaravelReactable\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +63,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "TrueFans\\LaravelReactable\\LaravelReactableServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "LaravelReactable": "TrueFans\\LaravelReactable\\Facades\\LaravelReactable"
             }
         }
     },

@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Database\Factories;
+namespace TrueFans\LaravelReactable\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
