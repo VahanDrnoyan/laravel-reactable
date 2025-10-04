@@ -2,9 +2,11 @@
 
 namespace TrueFans\LaravelReactable;
 
+use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use TrueFans\LaravelReactable\Commands\LaravelReactableCommand;
+use TrueFans\LaravelReactable\Livewire\Reactions;
 
 class LaravelReactableServiceProvider extends PackageServiceProvider
 {
@@ -19,7 +21,13 @@ class LaravelReactableServiceProvider extends PackageServiceProvider
             ->name('laravel-reactable')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_laravel_reactable_table')
+            ->hasMigration('create_reactions_table')
             ->hasCommand(LaravelReactableCommand::class);
+    }
+
+    public function bootingPackage(): void
+    {
+        // Register Livewire components
+        Livewire::component('reactions', Reactions::class);
     }
 }
