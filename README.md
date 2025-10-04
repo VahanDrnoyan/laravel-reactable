@@ -5,7 +5,13 @@
 
 A beautiful, Facebook-style reactions system for Laravel with Livewire. Add customizable emoji reactions (like, love, laugh, wow, sad, angry) to any model in your Laravel application with a single trait.
 
-![Laravel Reactable Demo](https://via.placeholder.com/800x400?text=Laravel+Reactable+Demo)
+## 📸 Demo
+
+### Reaction Picker
+![Reaction Picker Demo](docs/images/demo1.png)
+
+### Reactions List with Filters
+![Reactions List Demo](docs/images/demo2.png)
 
 ## ✨ Features
 
