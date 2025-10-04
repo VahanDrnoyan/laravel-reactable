@@ -1,10 +1,16 @@
-<div class="reactions-component">
+@assets
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/anchor@3.x.x/dist/cdn.min.js"></script>
+@endassets
+
+<div class="reactions-component" x-data="{ showPicker: false, showList: false }">
     <div class="flex flex-row-reverse items-center justify-between gap-4">
         <!-- Main Reaction Button (Facebook-style) -->
-        <div class="relative group">
+        <div class="relative">
             <!-- Primary Button -->
             <button
-                wire:click="toggleReaction"
+                x-ref="likeBtn"
+                @mouseenter="showPicker = true"
+                @mouseleave="showPicker = false"
                 type="button"
                 class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800
                     {{ $userReaction ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400' }}"
@@ -20,25 +26,26 @@
                 @endif
             </button>
 
-            <!-- Reaction Picker (appears on hover) - Facebook Style -->
-            <div class="absolute bottom-full right-0 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 pointer-events-none group-hover:pointer-events-auto">
+            <!-- Reaction Picker (Alpine Anchor) -->
+            <div 
+                x-show="showPicker"
+                x-anchor.top-end.offset.8="$refs.likeBtn"
+                x-transition
+                @mouseenter="showPicker = true"
+                @mouseleave="showPicker = false"
+                class="z-50"
+            >
                 <div class="bg-white dark:bg-gray-800 rounded-full shadow-xl border border-gray-200 dark:border-gray-700 px-3 py-2">
                     <div class="flex items-center gap-2">
                         @foreach($reactionTypes as $type => $config)
                             <button
                                 wire:click="react('{{ $type }}')"
                                 type="button"
-                                class="reaction-picker-btn group/btn relative transition-all duration-200 hover:scale-150 hover:-translate-y-1 focus:outline-none"
+                                class="reaction-picker-btn relative transition-all duration-200 hover:scale-125 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-1"
                                 title="{{ $config['label'] }}"
+                                aria-label="{{ $config['label'] }}"
                             >
                                 <span class="text-3xl block">{{ $config['icon'] }}</span>
-
-                                @if(config('reactable.display.show_tooltips', true))
-                                    <!-- Tooltip -->
-                                    <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/btn:opacity-100 transition-opacity">
-                                        {{ $config['label'] }}
-                                    </span>
-                                @endif
                             </button>
                         @endforeach
                     </div>
@@ -48,9 +55,10 @@
 
         <!-- Reaction Count Summary -->
         @if($this->totalReactions > 0)
-            <div class="relative" x-data="{ open: @entangle('showReactionsList') }" @click.away="$wire.closeReactionsList()">
+            <div class="relative">
                 <button
-                    wire:click="toggleReactionsList"
+                    x-ref="countBtn"
+                    @click="showList = !showList; if(showList) $wire.call('toggleReactionsList')"
                     type="button"
                     class="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg px-2 py-1 transition-colors cursor-pointer"
                 >
@@ -78,11 +86,17 @@
                     @endif
                 </button>
 
-                <!-- Reactions List Dropdown -->
-                @if($showReactionsList)
-                    <div class="absolute bottom-full left-0 mb-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50">
+                <!-- Reactions List Dropdown (Alpine Anchor) -->
+                <div 
+                    x-show="showList"
+                    x-anchor.top-start.offset.8="$refs.countBtn"
+                    x-transition
+                    @click.away="showList = false"
+                    class="min-w-80 max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50"
+                >
+                    @if($showReactionsList)
                         <!-- Tabs for filtering by reaction type -->
-                        <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+                        <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
                             <button
                                 wire:click="filterReactionsByType(null)"
                                 class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap
@@ -107,7 +121,7 @@
                         </div>
 
                         <!-- Users list -->
-                        <div class="p-3 max-h-80 overflow-y-auto">
+                        <div class="p-3">
                             @if(count($reactionUsers) > 0)
                                 <div class="space-y-2">
                                     @foreach($reactionUsers as $reactionUser)
@@ -137,8 +151,8 @@
                                 </p>
                             @endif
                         </div>
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
         @endif
     </div>
