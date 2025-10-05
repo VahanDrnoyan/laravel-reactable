@@ -27,8 +27,9 @@
             </button>
 
             <!-- Reaction Picker (Alpine Anchor) -->
-            <div 
+            <div
                 x-show="showPicker"
+                x-cloak
                 x-anchor.top-end.offset.8="$refs.likeBtn"
                 x-transition
                 @mouseenter="showPicker = true"
@@ -72,31 +73,35 @@
                         @endphp
 
                         @foreach($displayedReactions as $type => $count)
-                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-gray-800 border-2 border-white dark:border-gray-900 text-sm">
-                                {{ $reactionTypes[$type]['icon'] }}
-                            </span>
+                            @if(isset($reactionTypes[$type]))
+                                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-gray-800 border-2 border-white dark:border-gray-900 text-sm">
+                                    {{ $reactionTypes[$type]['icon'] }}
+                                </span>
+                            @endif
                         @endforeach
                     </div>
 
                     <!-- Total Count -->
                     @if(config('reactable.display.show_total', true))
                         <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                            {{ $this->totalReactions }}
                         </span>
                     @endif
                 </button>
 
                 <!-- Reactions List Dropdown (Alpine Anchor) -->
-                <div 
-                    x-show="showList"
-                    x-anchor.top-start.offset.8="$refs.countBtn"
-                    x-transition
-                    @click.away="showList = false"
-                    class="min-w-80 max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50"
-                >
+        @if($this->totalReactions > 0)
+            <div
+                x-show="showList"
+                x-cloak
+                x-anchor.bottom-start.offset.8="$refs.countBtn"
+                x-transition
+                @click.away="showList = false; $wire.call('closeReactionsList')"
+                class="z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700"
+                style="min-width: 320px;"
+            >
                     @if($showReactionsList)
                         <!-- Tabs for filtering by reaction type -->
-                        <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
+                        <div clas="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
                             <button
                                 wire:click="filterReactionsByType(null)"
                                 class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap
@@ -125,24 +130,26 @@
                             @if(count($reactionUsers) > 0)
                                 <div class="space-y-2">
                                     @foreach($reactionUsers as $reactionUser)
-                                        <div class="flex items-center justify-between py-2 px-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                            <div class="flex items-center gap-2 flex-1 min-w-0">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                                                    {{ substr($reactionUser['user_name'], 0, 1) }}
+                                        @if(isset($reactionTypes[$reactionUser['type']]))
+                                            <div class="flex items-center justify-between py-2 px-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                                                <div class="flex items-center gap-2 flex-1 min-w-0">
+                                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+                                                        {{ substr($reactionUser['user_name'], 0, 1) }}
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                            {{ $reactionUser['user_name'] }}
+                                                        </p>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                            {{ $reactionUser['created_at'] }}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                                                        {{ $reactionUser['user_name'] }}
-                                                    </p>
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                        {{ $reactionUser['created_at'] }}
-                                                    </p>
-                                                </div>
+                                                <span class="text-2xl flex-shrink-0 ml-2">
+                                                    {{ $reactionTypes[$reactionUser['type']]['icon'] }}
+                                                </span>
                                             </div>
-                                            <span class="text-2xl flex-shrink-0 ml-2">
-                                                {{ $reactionTypes[$reactionUser['type']]['icon'] }}
-                                            </span>
-                                        </div>
+                                        @endif
                                     @endforeach
                                 </div>
                             @else
