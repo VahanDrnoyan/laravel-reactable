@@ -327,7 +327,7 @@ test('model type and id are locked and cannot be changed', function () {
     // Verify properties are set correctly and locked
     $component->assertSet('modelType', Post::class);
     $component->assertSet('modelId', $this->post->id);
-    
+
     // The #[Locked] attribute prevents these from being updated
     // We verify they remain unchanged after component interactions
     $component->call('react', 'like');

@@ -169,7 +169,7 @@ test('reaction can be updated', function () {
 });
 
 test('reaction fillable attributes are protected', function () {
-    $reaction = new Reaction();
+    $reaction = new Reaction;
     $fillable = $reaction->getFillable();
 
     expect($fillable)->toContain('user_id');
