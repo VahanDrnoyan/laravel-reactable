@@ -1,6 +1,7 @@
 # Laravel Reactable
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/truefans/laravel-reactable.svg?style=flat-square)](https://packagist.org/packages/truefans/laravel-reactable)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/vahandr/laravel-reactable/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/vahandr/laravel-reactable/actions?query=workflow%3Atests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/truefans/laravel-reactable.svg?style=flat-square)](https://packagist.org/packages/truefans/laravel-reactable)
 
 A beautiful, Facebook-style reactions system for Laravel with Livewire. Add customizable emoji reactions (like, love, laugh, wow, sad, angry) to any model in your Laravel application with a single trait.
@@ -427,9 +428,42 @@ Reaction::create([
 
 ---
 
+## 🧪 Testing
+
+The package includes a comprehensive test suite with 59 tests covering all functionality.
+
+```bash
+# Run tests
+composer test
+
+# Run tests with coverage
+composer test-coverage
+
+# Run specific test file
+vendor/bin/pest tests/HasReactionsTraitTest.php
+```
+
+**Test Coverage:**
+- ✅ HasReactions trait (20 tests)
+- ✅ Reaction model (11 tests)
+- ✅ Livewire component (26 tests)
+- ✅ Architecture tests (2 tests)
+
+For detailed testing documentation, see [tests/README.md](tests/README.md) and [tests/TESTING_GUIDE.md](tests/TESTING_GUIDE.md).
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+**Development Setup:**
+1. Clone the repository
+2. Run `composer install`
+3. Run tests with `composer test`
+4. Make your changes
+5. Ensure all tests pass
+6. Submit a PR
 
 ---
 
