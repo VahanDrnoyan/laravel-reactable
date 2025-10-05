@@ -89,19 +89,18 @@
                 </button>
 
                 <!-- Reactions List Dropdown (Alpine Anchor) -->
-        @if($this->totalReactions > 0)
-            <div
-                x-show="showList"
-                x-cloak
-                x-anchor.bottom-start.offset.8="$refs.countBtn"
-                x-transition
-                @click.away="showList = false; $wire.call('closeReactionsList')"
-                class="z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700"
-                style="min-width: 320px;"
-            >
+                <div
+                    x-show="showList"
+                    x-cloak
+                    x-anchor.bottom-start.offset.8="$refs.countBtn"
+                    x-transition
+                    @click.away="showList = false; $wire.call('closeReactionsList')"
+                    class="z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700"
+                    style="min-width: 320px;"
+                >
                     @if($showReactionsList)
                         <!-- Tabs for filtering by reaction type -->
-                        <div clas="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
+                        <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 flex-wrap">
                             <button
                                 wire:click="filterReactionsByType(null)"
                                 class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap
