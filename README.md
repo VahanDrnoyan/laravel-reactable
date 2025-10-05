@@ -8,11 +8,17 @@ A beautiful, Facebook-style reactions system for Laravel with Livewire. Add cust
 
 ## 📸 Demo
 
-### Reaction Picker
+### Reaction Picker (Light Theme)
 ![Reaction Picker Demo](docs/images/demo1.png)
 
-### Reactions List with Filters
-![Reactions List Demo](docs/images/demo2.png)
+### Reaction Picker (Dark Theme)
+![Reaction Picker Dark Demo](docs/images/demo2.png)
+
+### Reactions List with Filters (Light Theme)
+![Reactions List Demo](docs/images/demo3.png)
+
+### Reactions List with Filters (Dark Theme)
+![Reactions List Dark Demo](docs/images/demo4.png)
 
 ## ✨ Features
 
