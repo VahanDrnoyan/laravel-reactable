@@ -27,7 +27,7 @@ class Reactions extends Component
     public array $reactionUsers = [];
 
     public ?string $selectedReactionFilter = null;
-
+    public $perPage = 7;
     public function mount(Model $model): void
     {
         $this->modelType = get_class($model);
@@ -36,7 +36,10 @@ class Reactions extends Component
 
         $this->loadReactions($model);
     }
-
+    public function loadMore(): void
+    {
+        $this->perPage += 7;
+    }
     protected function getModel(): Model
     {
         return $this->modelType::find($this->modelId);
@@ -85,7 +88,7 @@ class Reactions extends Component
             $query->where('type', $this->selectedReactionFilter);
         }
 
-        $this->reactionUsers = $query->get()
+        $this->reactionUsers = $query->take($this->perPage)->get()
             ->map(fn ($reaction) => [
                 'user_name' => $reaction->user->name,
                 'type' => $reaction->type,
