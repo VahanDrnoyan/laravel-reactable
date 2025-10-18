@@ -134,6 +134,9 @@ trait HasReactions
     }
     public function canReact(string $type): bool
     {
+//        if($type === 'love') {
+//            return false;
+//        }
         // Override this in your model if you want to restrict reactions
         return true;
     }

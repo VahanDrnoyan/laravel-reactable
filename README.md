@@ -258,10 +258,18 @@ LaravelReactable::getDisplaySettings();
 
 ### Custom Reaction Permissions
 
-You can control which users can react to specific models by implementing the `canReact` method in your model. This is useful for implementing business rules like:
-- Preventing users from reacting to their own posts
-- Restricting reactions based on user roles or permissions
+The `canReact` method gives you complete control over reaction visibility and interaction in your application. It serves two main purposes:
+
+1. **Visibility Control**: Determines if a specific reaction type should be shown to the current user
+2. **Interaction Control**: Determines if the user can interact with (click/select) a specific reaction type
+
+This is useful for implementing business rules like:
+- Showing/hiding specific reactions based on user roles or permissions
+- Preventing users from reacting to their own content
 - Implementing cooldown periods between reactions
+- Creating premium/exclusive reactions for specific user groups
+- Temporarily disabling certain reaction types
+- Implementing feature flags for reactions
 
 #### Example: Prevent Users from Reacting to Their Own Posts
 
@@ -273,11 +281,15 @@ class Post extends Model
     use HasReactions;
     
     /**
-     * Check if the authenticated user can react to this post
+     * Control reaction visibility and interaction
+     * 
+     * @param string $type The reaction type (e.g., 'like', 'love')
+     * @return bool Return false to hide the reaction and prevent interaction,
+     *              or true to show and allow the reaction
      */
     public function canReact(string $type): bool
     {
-        // Prevent users from reacting to their own posts
+        // Example: Prevent users from reacting to their own posts
         if (auth()->id() === $this->user_id) {
             return false;
         }
@@ -321,20 +333,43 @@ Livewire.on('reaction-removed', (data) => {
 
 The `canReact` method receives the reaction type as a parameter, allowing you to implement different rules for different reaction types. The method should return `true` if the reaction is allowed, or `false` to prevent it.
 
-#### Example: Role-Based Reaction Permissions
+#### Example: Role-Based Reaction Visibility
 
 ```php
 public function canReact(string $type): bool
 {
-    // Only allow premium users to use special reactions
-    if (in_array($type, ['love', 'laugh', 'wow', 'sad', 'angry']) && 
-        !auth()->user()->isPremium()) {
+    // Hide all reactions for guests
+    if (!auth()->check()) {
+        return false;
+    }
+
+    // Only show premium reactions to premium users
+    $premiumReactions = ['love', 'laugh', 'wow', 'sad', 'angry'];
+    if (in_array($type, $premiumReactions) && !auth()->user()->isPremium()) {
+        return false;
+    }
+
+    // Hide 'angry' reactions on Sundays (example of conditional logic)
+    if ($type === 'angry' && now()->dayOfWeek === 0) {
         return false;
     }
 
     return true;
 }
 ```
+
+### Reaction Visibility vs Interaction
+
+- When `canReact` returns `false` for a reaction type:
+  - The reaction will be hidden from the reaction picker
+  - The reaction will not be available in the filter tabs
+  - Existing reactions of that type will be hidden from the reactions list
+  - Users cannot interact with or select the reaction
+
+- When `canReact` returns `true`:
+  - The reaction is visible in the picker
+  - The reaction appears in filter tabs (if any exist)
+  - Users can see and interact with the reaction
 
 ### Avoiding N+1 Queries
 

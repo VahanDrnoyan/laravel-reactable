@@ -39,6 +39,9 @@
                         class="bg-white dark:bg-gray-800 rounded-full shadow-xl border border-gray-200 dark:border-gray-700 px-3 py-2">
                         <div class="flex items-center gap-2">
                             @foreach($reactionTypes as $type => $config)
+                                @if(method_exists($this->getModel(), 'canReact') && !$this->getModel()->canReact($type))
+                                    @continue
+                                @endif
                                 <button
                                     wire:click="react('{{ $type }}')"
                                     type="button"
@@ -116,6 +119,9 @@
                                 </button>
 
                                 @foreach($reactionTypes as $type => $config)
+                                    @if(method_exists($this->getModel(), 'canReact') && !$this->getModel()->canReact($type))
+                                        @continue
+                                    @endif
                                     @if($reactions[$type] > 0)
                                         <button
                                             wire:click="filterReactionsByType('{{ $type }}')"
@@ -133,6 +139,9 @@
                                 @if(count($reactionUsers) > 0)
                                     <div class="space-y-2">
                                         @foreach($reactionUsers as $reactionUser)
+                                            @if(method_exists($this->getModel(), 'canReact') && !$this->getModel()->canReact($reactionUser['type']))
+                                                @continue
+                                            @endif
                                             @if(isset($reactionTypes[$reactionUser['type']]))
                                                 <div
                                                     class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
