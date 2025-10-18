@@ -62,19 +62,6 @@ Publish the migration, config, and views:
 php artisan vendor:publish --provider="TrueFans\LaravelReactable\LaravelReactableServiceProvider"
 ```
 
-Or publish individually:
-
-```bash
-# Publish migration
-php artisan vendor:publish --tag="laravel-reactable-migrations"
-
-# Publish config
-php artisan vendor:publish --tag="laravel-reactable-config"
-
-# Publish views (optional - for customization)
-php artisan vendor:publish --tag="laravel-reactable-views"
-```
-
 ### Step 3: Run Migrations
 
 ```bash
@@ -102,17 +89,6 @@ Version 1.1.0 introduces infinite scrolling for the reactions list, providing a 
 
 ### How It Works:
 The reactions list now uses Laravel's pagination with Livewire's `x-intersect` to detect when the user scrolls to the bottom of the list. When triggered, it automatically loads the next set of reactions.
-
-### Customization:
-You can adjust the number of reactions loaded per page by modifying the `perPage` property in the `Reactions` Livewire component.
-
-```php
-// In your service provider or wherever you register Livewire components
-Livewire::component('reactions', \TrueFans\LaravelReactable\Livewire\Reactions::class);
-
-// Then in your view:
-<livewire:reactions :model="$post" :per-page="15" />
-```
 
 ## 📖 Usage
 
@@ -279,16 +255,6 @@ LaravelReactable::getDisplaySettings();
 ---
 
 ## 🎯 Advanced Usage
-
-### Custom Styling
-
-Publish the views and customize the Blade templates:
-
-```bash
-php artisan vendor:publish --tag="laravel-reactable-views"
-```
-
-Views will be published to `resources/views/vendor/reactable/`.
 
 ### Events
 
