@@ -1,6 +1,6 @@
 # Laravel Reactable
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/truefans/laravel-reactable.svg?style=flat-square)](https://packagist.org/packages/truefans/laravel-reactable)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/truefans/laravel-reactable.svg?style=flat-square)](https://packagist.org/packages/truefans/laravel-reactable) ![New in v1.1.0](https://img.shields.io/badge/NEW-infinite%20scrolling-4CAF50?style=flat-square)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/VahanDrnoyan/laravel-reactable/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/VahanDrnoyan/laravel-reactable/actions?query=workflow%3Atests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/truefans/laravel-reactable.svg?style=flat-square)](https://packagist.org/packages/truefans/laravel-reactable)
 
@@ -27,6 +27,7 @@ A beautiful, Facebook-style reactions system for Laravel with Livewire. Add cust
 - 📦 **Polymorphic Relations** - React to Posts, Comments, Images, or any model
 - 🎨 **Fully Customizable** - Configure reaction types, icons, colors via config
 - 👥 **User Reactions List** - See who reacted with filterable tabs by reaction type
+- ♾️ **Infinite Scrolling** - Seamlessly load more reactions as you scroll (v1.1.0+)
 - 🌙 **Dark Mode Support** - Beautiful UI in both light and dark themes
 - ⚡ **Optimized Queries** - Efficient database queries with proper indexing
 - 🔒 **Unique Reactions** - One reaction per user per item (can be changed)
@@ -88,6 +89,30 @@ This creates the `reactions` table with:
 - Optimized indexes
 
 ---
+
+## 🔄 Infinite Scrolling (v1.1.0+)
+
+Version 1.1.0 introduces infinite scrolling for the reactions list, providing a smoother user experience when viewing many reactions.
+
+### Key Features:
+- **Automatic Loading**: New reactions load automatically as you scroll down the list
+- **Loading Indicator**: Shows a subtle loading spinner when fetching more reactions
+- **Optimized Performance**: Loads in chunks to maintain performance
+- **Seamless Integration**: Works with all existing features including reaction filtering
+
+### How It Works:
+The reactions list now uses Laravel's pagination with Livewire's `x-intersect` to detect when the user scrolls to the bottom of the list. When triggered, it automatically loads the next set of reactions.
+
+### Customization:
+You can adjust the number of reactions loaded per page by modifying the `perPage` property in the `Reactions` Livewire component.
+
+```php
+// In your service provider or wherever you register Livewire components
+Livewire::component('reactions', \TrueFans\LaravelReactable\Livewire\Reactions::class);
+
+// Then in your view:
+<livewire:reactions :model="$post" :per-page="15" />
+```
 
 ## 📖 Usage
 
