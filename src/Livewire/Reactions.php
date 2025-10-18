@@ -39,6 +39,7 @@ class Reactions extends Component
     public function loadMore(): void
     {
         $this->perPage += 7;
+        $this->loadReactionUsers();
     }
     protected function getModel(): Model
     {
@@ -80,6 +81,7 @@ class Reactions extends Component
 
     public function loadReactionUsers(): void
     {
+
         $model = $this->getModel();
         $query = $model->reactions()->with('user')->latest();
 

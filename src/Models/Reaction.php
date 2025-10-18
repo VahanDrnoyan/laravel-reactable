@@ -2,12 +2,19 @@
 
 namespace TrueFans\LaravelReactable\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-
+use TrueFans\LaravelReactable\Database\Factories\ReactionFactory;
 class Reaction extends Model
 {
+    use HasFactory;
+
+    protected static function newFactory()
+    {
+        return ReactionFactory::new();
+    }
     protected $fillable = [
         'user_id',
         'reactable_id',
