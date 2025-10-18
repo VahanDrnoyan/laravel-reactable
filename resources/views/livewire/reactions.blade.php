@@ -3,7 +3,7 @@
 @endassets
 
 <div class="reactions-component" x-data="{ showPicker: false, showList: false }">
-    <div class="flex flex-row-reverse items-center justify-between gap-4">
+    <tem class="flex flex-row-reverse items-center justify-between gap-4">
         <!-- Main Reaction Button (Facebook-style) -->
         <div class="relative">
             <!-- Primary Button -->
@@ -28,6 +28,8 @@
             </button>
 
             <!-- Reaction Picker (Alpine Anchor) -->
+            <template x-teleport="body">
+
             <div
                 x-show="showPicker"
                 x-anchor.top-end.offset.8="$refs.likeBtn"
@@ -54,8 +56,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+            </template>
 
+        </div>
         <!-- Reaction Count Summary -->
         @if($this->totalReactions > 0)
             <div class="relative">
@@ -128,7 +131,7 @@
                             </div>
 
                             <!-- Users list -->
-                            <div class="p-3">
+                            <div class="p-3 max-h-96 overflow-y-auto no-scrollbar">
                                 @if(count($reactionUsers) > 0)
                                     <div class="space-y-2">
                                         @foreach($reactionUsers as $reactionUser)
