@@ -88,7 +88,7 @@ class Reactions extends Component
             $query->where('type', $this->selectedReactionFilter);
         }
 
-        $this->reactionUsers = $query->take($this->perPage)->get()
+        $this->reactionUsers = $query->paginate($this->perPage)
             ->map(fn ($reaction) => [
                 'user_name' => $reaction->user->name,
                 'type' => $reaction->type,
