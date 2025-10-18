@@ -336,12 +336,25 @@ Create test data with the included seeder:
 use TrueFans\LaravelReactable\Models\Reaction;
 
 // Create reactions programmatically
-Reaction::create([
-    'user_id' => $user->id,
-    'reactable_type' => Post::class,
-    'reactable_id' => $post->id,
-    'type' => 'like',
-]);
+public function run(): void
+    {
+
+        $reactionTypes = ['like', 'love', 'laugh', 'wow', 'sad', 'angry'];
+
+        Post::factory()
+            ->count(10)
+            ->has(
+                Reaction::factory()
+                    ->count(100)
+                    ->state(fn() => [
+                        'user_id'        => User::factory(),
+                        'type'           => fake()->randomElement($reactionTypes),
+                        'reactable_type' => Post::factory(),
+                    ])
+            )
+            ->create();
+
+    }
 ```
 
 ---
@@ -401,7 +414,7 @@ Reaction::create([
 - **Accessibility:** Proper ARIA attributes and keyboard navigation
 
 ### Smart Positioning Technology
-- **Powered by:** Alpine.js Anchor plugin (included via CDN)
+- **Powered by:** Alpine.js Anchor plugin (included with Livewire by default)
 - **Benefits:**
   - Zero configuration required
   - Automatic viewport detection
