@@ -1,7 +1,3 @@
-@assets
-<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/anchor@3.x.x/dist/cdn.min.js"></script>
-@endassets
-
 <div class="reactions-component" x-data="{ showPicker: false, showList: false }">
     <tem class="flex flex-row-reverse items-center justify-between gap-4">
         <!-- Main Reaction Button (Facebook-style) -->
