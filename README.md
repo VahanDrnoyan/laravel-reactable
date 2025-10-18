@@ -256,6 +256,52 @@ LaravelReactable::getDisplaySettings();
 
 ## 🎯 Advanced Usage
 
+### Custom Reaction Permissions
+
+You can control which users can react to specific models by implementing the `canReact` method in your model. This is useful for implementing business rules like:
+- Preventing users from reacting to their own posts
+- Restricting reactions based on user roles or permissions
+- Implementing cooldown periods between reactions
+
+#### Example: Prevent Users from Reacting to Their Own Posts
+
+```php
+use TrueFans\LaravelReactable\Traits\HasReactions;
+
+class Post extends Model
+{
+    use HasReactions;
+    
+    /**
+     * Check if the authenticated user can react to this post
+     */
+    public function canReact(string $type): bool
+    {
+        // Prevent users from reacting to their own posts
+        if (auth()->id() === $this->user_id) {
+            return false;
+        }
+
+        // Example: Only allow 'like' and 'love' reactions
+        if (!in_array($type, ['like', 'love'])) {
+            return false;
+        }
+
+        // Example: Implement a cooldown period
+        $lastReaction = $this->reactions()
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->first();
+
+        if ($lastReaction && $lastReaction->created_at->gt(now()->subHour())) {
+            return false; // 1-hour cooldown between reactions
+        }
+
+        return true;
+    }
+}
+```
+
 ### Events
 
 The component dispatches Livewire events:
@@ -269,6 +315,25 @@ Livewire.on('reaction-added', (data) => {
 Livewire.on('reaction-removed', (data) => {
     console.log('Reaction removed:', data.type);
 });
+```
+
+### Customizing the canReact Method
+
+The `canReact` method receives the reaction type as a parameter, allowing you to implement different rules for different reaction types. The method should return `true` if the reaction is allowed, or `false` to prevent it.
+
+#### Example: Role-Based Reaction Permissions
+
+```php
+public function canReact(string $type): bool
+{
+    // Only allow premium users to use special reactions
+    if (in_array($type, ['love', 'laugh', 'wow', 'sad', 'angry']) && 
+        !auth()->user()->isPremium()) {
+        return false;
+    }
+
+    return true;
+}
 ```
 
 ### Avoiding N+1 Queries

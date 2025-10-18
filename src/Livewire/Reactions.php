@@ -173,6 +173,11 @@ class Reactions extends Component
         if (! array_key_exists($type, $this->reactionTypes)) {
             return;
         }
+        if(method_exists($this->getModel(), 'canReact')) {
+            if(!$this->getModel()->canReact($type)) {
+                return;
+            }
+        }
 
         // If user already reacted with the same type, remove it
         if ($this->userReaction === $type) {
