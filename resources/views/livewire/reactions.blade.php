@@ -5,6 +5,7 @@
             <!-- Primary Button -->
             <button
                 x-ref="likeBtn"
+                @keydown.escape="showPicker = false"
                 @mouseenter="showPicker = true"
                 @mouseleave="showPicker = false"
                 type="button"
@@ -31,6 +32,7 @@
                     x-cloak
                     x-anchor.top-end.offset.8="$refs.likeBtn"
                     x-transition
+                    @keydown.escape="showPicker = false"
                     @mouseenter="showPicker = true"
                     @mouseleave="showPicker = false"
                     class="z-50"
@@ -63,6 +65,7 @@
             <div class="relative">
                 <button
                     x-ref="countBtn"
+                    @keydown.escape="showList = false; $wire.call('closeReactionsList')"
                     @click="showList = !showList; if(showList) $wire.call('toggleReactionsList')"
                     type="button"
                     class="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg px-2 py-1 transition-colors cursor-pointer"
@@ -99,6 +102,7 @@
 
                     <div
                         x-show="showList"
+                        @keydown.escape="showList = false; $wire.call('closeReactionsList')"
                         x-cloak
                         x-anchor.bottom-start.offset.8="$refs.countBtn"
                         x-transition
