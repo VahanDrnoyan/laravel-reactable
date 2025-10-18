@@ -34,7 +34,10 @@
                 <div
                     x-show="showPicker"
                     x-cloak
-                    x-trap.noscroll.inert="showPicker"
+                    @keydown.right="$focus.wrap().next()"
+                    @keydown.left="$focus.wrap().previous()"
+
+                    x-trap.noscroll="showPicker"
                     x-anchor.top-end.offset.8="$refs.likeBtn"
                     x-transition
                     @mouseenter="showPicker = true"
@@ -51,7 +54,6 @@
                                 @endif
                                 <button
                                     @keydown.escape="showPicker = false;"
-
                                     wire:click="react('{{ $type }}')"
                                     type="button"
                                     class="reaction-picker-btn relative transition-all duration-200 hover:scale-125 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-1"
@@ -109,8 +111,11 @@
 
                     <div
                         x-show="showList"
-                        x-trap.noscroll.inert="showList"
+                        x-trap.noscroll="showList"
                         x-cloak
+                        @keydown.right="$focus.wrap().next()"
+                        @keydown.left="$focus.wrap().previous()"
+
                         @keydown.escape="showList = false; $wire.call('closeReactionsList')"
                         x-anchor.bottom-start.offset.8="$refs.countBtn"
                         x-transition

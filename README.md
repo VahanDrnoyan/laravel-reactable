@@ -200,17 +200,35 @@ return [
 
 ## ♿ Accessibility
 
-We've made significant improvements to ensure the reaction picker is fully accessible:
+We've made significant improvements to ensure the reaction picker and dropdowns are fully accessible:
 
 ### Keyboard Navigation
 - **Tab Navigation**: All interactive elements are properly included in the tab order
+- **Arrow Keys**: Navigate between reaction options using left/right arrow keys
 - **Enter/Space**: Select the currently focused reaction
-- **Escape**: Close the reaction picker
+- **Escape**: Close the reaction picker or dropdown
 
 ### Focus Management
-- **Focus Trapping**: When the reaction picker is open, focus is trapped within the component
-- **Focus Return**: Focus returns to the trigger button when the picker is closed
+- **Focus Trapping**: When any dropdown is open, focus is trapped within the component
+- **Focus Wrapping**: Navigation wraps around when reaching the start/end of the focusable elements
+- **Focus Return**: Focus returns to the trigger button when the dropdown is closed
 - **Visible Focus**: Clear visual indicators for focused elements
+
+### Dropdown Navigation
+- **Reaction Picker**:
+  - `→` Move focus to the next reaction
+  - `←` Move focus to the previous reaction
+  - `Escape` Close the picker
+  
+- **Reactions List**:
+  - `→` Move focus to the next reaction filter tab
+  - `←` Move focus to the previous reaction filter tab
+  - `Escape` Close the list
+
+### Screen Reader Support
+- All interactive elements have proper ARIA attributes
+- Focus management ensures screen readers announce changes correctly
+- Buttons and controls have appropriate labels and roles
 
 
 ### Trait Methods
