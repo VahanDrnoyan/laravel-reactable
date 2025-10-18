@@ -7,7 +7,11 @@
                 x-ref="likeBtn"
                 @keydown.escape="showPicker = false"
                 @mouseenter="showPicker = true"
+                @keydown.escape="showPicker = false"
+
                 @mouseleave="showPicker = false"
+                @click="showPicker = true"
+                @keydown.enter="showPicker = true"
                 type="button"
                 class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800
                     {{ $userReaction ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400' }}"
@@ -30,10 +34,11 @@
                 <div
                     x-show="showPicker"
                     x-cloak
+                    x-trap.noscroll.inert="showPicker"
                     x-anchor.top-end.offset.8="$refs.likeBtn"
                     x-transition
-                    @keydown.escape="showPicker = false"
                     @mouseenter="showPicker = true"
+
                     @mouseleave="showPicker = false"
                     class="z-50"
                 >
@@ -45,6 +50,8 @@
                                     @continue
                                 @endif
                                 <button
+                                    @keydown.escape="showPicker = false;"
+
                                     wire:click="react('{{ $type }}')"
                                     type="button"
                                     class="reaction-picker-btn relative transition-all duration-200 hover:scale-125 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-1"
@@ -102,8 +109,9 @@
 
                     <div
                         x-show="showList"
-                        @keydown.escape="showList = false; $wire.call('closeReactionsList')"
+                        x-trap.noscroll.inert="showList"
                         x-cloak
+                        @keydown.escape="showList = false; $wire.call('closeReactionsList')"
                         x-anchor.bottom-start.offset.8="$refs.countBtn"
                         x-transition
                         @click.away="showList = false; $wire.call('closeReactionsList')"

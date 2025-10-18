@@ -34,6 +34,7 @@ A beautiful, Facebook-style reactions system for Laravel with Livewire. Add cust
 - 📱 **Responsive Design** - Works perfectly on mobile and desktop
 - 🎯 **Smart Positioning** - Intelligent dropdown placement with Alpine.js Anchor plugin
 - 🔄 **Auto-Flip** - Dropdowns automatically reposition to stay within viewport
+- ♿ **Accessibility First** - Full keyboard navigation and focus trapping for better accessibility
 
 ---
 
@@ -197,7 +198,20 @@ return [
 
 ---
 
-## 🔧 API Reference
+## ♿ Accessibility
+
+We've made significant improvements to ensure the reaction picker is fully accessible:
+
+### Keyboard Navigation
+- **Tab Navigation**: All interactive elements are properly included in the tab order
+- **Enter/Space**: Select the currently focused reaction
+- **Escape**: Close the reaction picker
+
+### Focus Management
+- **Focus Trapping**: When the reaction picker is open, focus is trapped within the component
+- **Focus Return**: Focus returns to the trigger button when the picker is closed
+- **Visible Focus**: Clear visual indicators for focused elements
+
 
 ### Trait Methods
 
