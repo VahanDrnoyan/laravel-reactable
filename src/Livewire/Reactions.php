@@ -19,6 +19,7 @@ class Reactions extends Component
     public ?string $userReaction = null;
 
     public array $reactionTypes = [];
+    public bool $isLoadingReactions = false;
 
     public bool $showPicker = false;
 
@@ -81,7 +82,7 @@ class Reactions extends Component
 
     public function loadReactionUsers(): void
     {
-
+$this->isLoadingReactions = true;
         $model = $this->getModel();
         $query = $model->reactions()->with('user')->latest();
 
@@ -97,6 +98,7 @@ class Reactions extends Component
                 'created_at' => $reaction->created_at->diffForHumans(),
             ])
             ->toArray();
+        $this->isLoadingReactions = false;
     }
 
     public function loadReactions(?Model $model = null): void
