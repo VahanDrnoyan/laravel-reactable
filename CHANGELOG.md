@@ -2,6 +2,37 @@
 
 All notable changes to `laravel-reactable` will be documented in this file.
 
+## [1.1.6] - 2024-10-19
+
+### 🚀 Performance & Accessibility Improvements
+
+#### Accessibility Enhancements
+- Added comprehensive ARIA attributes for better screen reader support
+- Improved keyboard navigation with proper focus management
+- Added proper roles and states for interactive elements
+- Enhanced color contrast for better readability
+- Added loading states with `aria-busy` and status messages
+- Improved dialog and modal accessibility with proper labeling
+- Added screen reader announcements for dynamic content updates
+
+#### Performance Optimizations
+- Cached model instance in Livewire component to reduce database queries
+- Optimized reaction loading and filtering
+- Improved infinite scrolling performance
+- Reduced unnecessary re-renders in Livewire components
+
+#### Bug Fixes
+- Fixed focus management when closing dialogs with escape key
+- Fixed tab order in reaction picker and filter tabs
+- Ensured proper focus trapping in modals
+- Fixed contrast issues in dark mode
+
+#### Developer Experience
+- Added comprehensive accessibility documentation
+- Improved error handling and validation
+- Added more detailed inline documentation
+- Updated test suite to include accessibility checks
+
 ## [1.0.0] - 2025-10-05
 
 ### 🎉 Initial Release
