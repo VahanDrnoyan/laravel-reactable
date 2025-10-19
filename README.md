@@ -34,7 +34,7 @@ A beautiful, Facebook-style reactions system for Laravel with Livewire. Add cust
 - 📱 **Responsive Design** - Works perfectly on mobile and desktop
 - 🎯 **Smart Positioning** - Intelligent dropdown placement with Alpine.js Anchor plugin
 - 🔄 **Auto-Flip** - Dropdowns automatically reposition to stay within viewport
-- ♿ **Accessibility First** - Full keyboard navigation and focus trapping for better accessibility
+- ♿ **Accessibility First** - Full keyboard navigation, focus management, and ARIA attributes for screen readers
 
 ---
 
@@ -490,6 +490,42 @@ public function run(): void
 ```
 
 ---
+
+## ♿ Accessibility Features
+
+### Keyboard Navigation
+- Full keyboard navigation support for all interactive elements
+- **Tab** - Move between interactive elements
+- **Enter/Space** - Activate buttons and toggles
+- **Escape** - Close open dialogs and return focus to the triggering element
+- **Arrow Keys** - Navigate between reaction options and filter tabs
+- **Home/End** - Jump to first/last item in lists
+
+### ARIA Attributes
+- `role="menu"` and `role="menuitem"` for reaction picker
+- `role="dialog"` for modals with proper labeling
+- `aria-expanded` to indicate expandable/collapsible elements
+- `aria-pressed` for toggle buttons
+- `aria-live` regions for dynamic content updates
+- `aria-busy` for loading states
+- `aria-label` and `aria-labelledby` for better screen reader context
+
+### Focus Management
+- Focus is trapped within open dialogs
+- Focus returns to the triggering element when dialogs close
+- Focus is managed during dynamic content loading
+- Hidden elements are removed from the tab order
+
+### Screen Reader Support
+- All interactive elements have appropriate labels
+- Status messages for reactions and loading states
+- Semantic HTML structure for better navigation
+- Hidden text for screen readers where visual context is insufficient
+
+### Color Contrast
+- Meets WCAG 2.1 AA contrast requirements
+- Proper color contrast in both light and dark modes
+- Visual indicators beyond color for interactive states
 
 ## 🎨 UI Components & Interactions
 
