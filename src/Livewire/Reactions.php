@@ -11,6 +11,8 @@ class Reactions extends Component
     #[Locked]
     public string $modelType;
 
+    public $model;
+
     #[Locked]
     public int $modelId;
 
@@ -31,6 +33,7 @@ class Reactions extends Component
     public $perPage = 7;
     public function mount(Model $model): void
     {
+        $this->model = $model;
         $this->modelType = get_class($model);
         $this->modelId = $model->id;
         $this->reactionTypes = config('reactable.reaction_types', []);
@@ -44,7 +47,7 @@ class Reactions extends Component
     }
     protected function getModel(): Model
     {
-        return $this->modelType::find($this->modelId);
+        return $this->model;
     }
 
     public function togglePicker(): void
