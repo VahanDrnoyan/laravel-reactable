@@ -141,7 +141,6 @@
                         @keydown.escape="showList = false; $wire.call('closeReactionsList')"
                         x-anchor.bottom-start.offset.8="$refs.countBtn"
                         x-transition
-                        x-init="$watch('showList', value => { if (value) $nextTick(() => $el.focus()) })"
                         class="z-50 min-w-[320px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700"
                     >
                         <p id="reactions-dialog-title-{{ $this->modelId }}" class="sr-only">
