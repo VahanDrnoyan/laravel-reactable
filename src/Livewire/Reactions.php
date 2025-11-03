@@ -243,6 +243,6 @@ class Reactions extends Component
 
     public function render()
     {
-        return view('reactable::livewire.reactions');
+        return view('reactable::livewire.tflr_reactions');
     }
 }

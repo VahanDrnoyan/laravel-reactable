@@ -28,6 +28,6 @@ class LaravelReactableServiceProvider extends PackageServiceProvider
     public function bootingPackage(): void
     {
         // Register Livewire components
-        Livewire::component('reactions', Reactions::class);
+        Livewire::component('tflr_reactions', Reactions::class);
     }
 }
