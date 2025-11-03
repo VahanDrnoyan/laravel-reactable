@@ -132,11 +132,12 @@ trait HasReactions
         return $query->withCount('reactions')
             ->orderBy('reactions_count', $direction);
     }
+
     public function canReact(string $type): bool
     {
-//        if($type === 'love') {
-//            return false;
-//        }
+        //        if($type === 'love') {
+        //            return false;
+        //        }
         // Override this in your model if you want to restrict reactions
         return true;
     }
