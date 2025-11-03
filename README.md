@@ -129,7 +129,7 @@ public function index()
 In your Blade views:
 
 ```blade
-<livewire:reactions :model="$post" />
+<livewire:tflr_reactions :model="$post" />
 ```
 
 **That's it!** The component will automatically:
