@@ -21,6 +21,7 @@ class Reactions extends Component
     public ?string $userReaction = null;
 
     public array $reactionTypes = [];
+
     public bool $isLoadingReactions = false;
 
     public bool $showPicker = false;
@@ -30,7 +31,9 @@ class Reactions extends Component
     public array $reactionUsers = [];
 
     public ?string $selectedReactionFilter = null;
+
     public $perPage = 7;
+
     public function mount(Model $model): void
     {
         $this->model = $model;
@@ -40,11 +43,13 @@ class Reactions extends Component
 
         $this->loadReactions($model);
     }
+
     public function loadMore(): void
     {
         $this->perPage += 7;
         $this->loadReactionUsers();
     }
+
     protected function getModel(): Model
     {
         return $this->model;
@@ -178,8 +183,8 @@ class Reactions extends Component
         if (! array_key_exists($type, $this->reactionTypes)) {
             return;
         }
-        if(method_exists($this->getModel(), 'canReact')) {
-            if(!$this->getModel()->canReact($type)) {
+        if (method_exists($this->getModel(), 'canReact')) {
+            if (! $this->getModel()->canReact($type)) {
                 return;
             }
         }
@@ -243,6 +248,6 @@ class Reactions extends Component
 
     public function render()
     {
-        return view('reactable::livewire.reactions');
+        return view('reactable::livewire.tflr_reactions');
     }
 }
