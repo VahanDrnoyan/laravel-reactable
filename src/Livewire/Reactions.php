@@ -85,7 +85,7 @@ class Reactions extends Component
 
     public function loadReactionUsers(): void
     {
-$this->isLoadingReactions = true;
+        $this->isLoadingReactions = true;
         $model = $this->getModel();
         $query = $model->reactions()->with('user')->latest();
 
