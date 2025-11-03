@@ -138,6 +138,8 @@
                         aria-describedby="reactions-dialog-description-{{ $this->modelId }}"
                         @keydown.right="$focus.wrap().next()"
                         @keydown.left="$focus.wrap().previous()"
+                        @keydown.down="$focus.wrap().next()"
+                        @keydown.up="$focus.wrap().previous()"
                         @keydown.escape="showList = false; $wire.call('closeReactionsList')"
                         x-anchor.bottom-start.offset.8="$refs.countBtn"
                         x-transition
@@ -201,7 +203,7 @@
                                                 @continue
                                             @endif
                                             @if(isset($reactionTypes[$reactionUser['type']]))
-                                                <div class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                                <div tabindex="0" class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                                     <div class="flex items-center gap-3 min-w-0 flex-1">
                                                         <div class="flex-shrink-0">
                                                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
