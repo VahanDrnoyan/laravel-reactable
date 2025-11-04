@@ -1,12 +1,12 @@
 <?php
+
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use TrueFans\LaravelReactable\Tests\Models\Post;
-use TrueFans\LaravelReactable\Tests\Models\User;
 use Livewire\Livewire;
 use TrueFans\LaravelReactable\Livewire\Reactions;
-use Illuminate\Support\Facades\Artisan;
-
+use TrueFans\LaravelReactable\Tests\Models\Post;
+use TrueFans\LaravelReactable\Tests\Models\User;
 
 beforeEach(function () {
     // Clear Laravel config cache for the test runtime
@@ -43,17 +43,17 @@ beforeEach(function () {
 
     // Create a profile with a *real image URL*
     $this->user->profile()->create([
-        'image_url' => asset('storage/' . $path), // public URL to stored file
+        'image_url' => asset('storage/'.$path), // public URL to stored file
     ]);
 });
-test('confirm profile instantitated', function (){
+test('confirm profile instantitated', function () {
     expect($this->user->profile)->not->toBeNull()
         ->and($this->user->profile->image_url)->toContain('storage/');
 });
 test('user avatar is displayed', function () {
-     Livewire::test(Reactions::class, ['model' => $this->post])
-         ->set('showReactionsList', true)
-         ->call('filterReactionsByType', 'love')
+    Livewire::test(Reactions::class, ['model' => $this->post])
+        ->set('showReactionsList', true)
+        ->call('filterReactionsByType', 'love')
         ->assertSee('img src=');
 });
 test('user model getAvatarUrl is called instead if config is null', function () {
