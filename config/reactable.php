@@ -74,6 +74,6 @@ return [
    | Configure avatar path related to user model. THis will be displayed in users list.
    |
    */
-    'avatar_field' => 'profile.image'
+    'avatar_field' => 'profile.image_url'
 
 ];

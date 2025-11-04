@@ -57,5 +57,11 @@ class TestCase extends Orchestra
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });
+        $app['db']->connection()->getSchemaBuilder()->create('profiles', function ($table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('image_url');
+            $table->timestamps();
+        });
     }
 }

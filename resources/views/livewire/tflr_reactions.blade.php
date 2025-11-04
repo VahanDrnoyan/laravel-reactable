@@ -215,7 +215,7 @@
                                                                 $avatarUrl = data_get($reactionUser['user'], $avatarField) ?? (method_exists($reactionUser['user'], 'getAvatarUrl') ? $reactionUser['user']->getAvatarUrl() : null);
                                                             @endphp
                                                             @if($avatarUrl)
-                                                            <img src="{{ $avatarUrl }}" alt="User {{$reactionUser->name}}" class="rounded-full w-10 h-10">
+                                                            <img src="{{ $avatarUrl }}" alt="User {{$reactionUser['user_name']}}" class="rounded-full w-10 h-10">
                                                             @else
                                                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
                                                                 {{ substr($reactionUser['user_name'], 0, 1) }}
