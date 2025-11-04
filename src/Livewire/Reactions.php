@@ -18,7 +18,7 @@ class Reactions extends Component
 
     public array $reactions = [];
 
-    public string $userReaction = '';
+    public ?string $userReaction = null;
 
     public array $reactionTypes = [];
 
