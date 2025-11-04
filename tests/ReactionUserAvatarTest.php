@@ -5,12 +5,17 @@ use TrueFans\LaravelReactable\Tests\Models\Post;
 use TrueFans\LaravelReactable\Tests\Models\User;
 use Livewire\Livewire;
 use TrueFans\LaravelReactable\Livewire\Reactions;
-
+use Illuminate\Support\Facades\Artisan;
 
 
 beforeEach(function () {
-    config(['auth.providers.users.model' => \TrueFans\LaravelReactable\Tests\Models\User::class]);
+    // Clear Laravel config cache for the test runtime
+    Artisan::call('config:clear');
 
+    // Optional: also clear other caches
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    config(['auth.providers.users.model' => \TrueFans\LaravelReactable\Tests\Models\User::class]);
     // Use the *real* public disk (not faked), so the file physically exists
     Storage::disk('public')->makeDirectory('test-avatars');
 
@@ -50,4 +55,11 @@ test('user avatar is displayed', function () {
          ->set('showReactionsList', true)
          ->call('filterReactionsByType', 'love')
         ->assertSee('img src=');
+});
+test('user model getAvatarUrl is called instead if config is null', function () {
+    config(['reactable.avatar_field' => null]);
+    Livewire::test(Reactions::class, ['model' => $this->post])
+        ->set('showReactionsList', true)
+        ->call('filterReactionsByType', 'love')
+        ->assertSee('test_url');
 });

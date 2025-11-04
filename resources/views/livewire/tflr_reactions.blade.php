@@ -197,23 +197,29 @@
                                 :aria-busy="$wire.isLoadingReactions"
                                 aria-label="{{ __('List of users who reacted with :reaction', ['reaction' => $reactionTypes[$selectedReactionFilter]['label'] ?? 'reactions']) }}"
                             >
+
                                 @if(count($reactionUsers) > 0)
+
                                     <div class="space-y-2">
                                         @foreach($reactionUsers as $reactionUser)
                                             @if(method_exists($this->getModel(), 'canReact') && !$this->getModel()->canReact($reactionUser['type']))
                                                 @continue
                                             @endif
+
+
                                             @if(isset($reactionTypes[$reactionUser['type']]))
+
                                                 <div
                                                     tabindex="0"
                                                     class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                                     <div
                                                         class="flex items-center gap-3 min-w-0 flex-1">
                                                         <div class="flex-shrink-0">
+
                                                             @php
                                                                 $avatarField = config('reactable.avatar_field'); // e.g. 'profile.image'
-                                                                $avatarUrl = data_get($reactionUser['user'], $avatarField) ?? (method_exists($reactionUser['user'], 'getAvatarUrl') ? $reactionUser['user']->getAvatarUrl() : null);
-                                                            @endphp
+                                                                $avatarUrl = $avatarField ? data_get($reactionUser['user'], $avatarField) : ((method_exists($reactionUser['user'], 'getAvatarUrl') ? ($reactionUser['user']->getAvatarUrl()) : null));
+                                                                @endphp
                                                             @if($avatarUrl)
                                                             <img src="{{ $avatarUrl }}" alt="User {{$reactionUser['user_name']}}" class="rounded-full w-10 h-10">
                                                             @else

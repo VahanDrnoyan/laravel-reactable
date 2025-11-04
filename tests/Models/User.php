@@ -11,4 +11,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class);
     }
+    public function getAvatarUrl(): string {
+        return 'test_url';
+    }
 }
