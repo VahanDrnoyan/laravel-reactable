@@ -13,7 +13,7 @@
                 type="button"
                 :aria-expanded="showPicker.toString()"
                 aria-haspopup="menu"
-                :aria-label="$userReaction ? 'Change your reaction' : 'Add a reaction'"
+                :aria-label="'{{$userReaction}}' ? 'Change your reaction' : 'Add a reaction'"
                 class="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-800
                     {{ $userReaction ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400' }}"
             >
@@ -73,12 +73,12 @@
             </template>
 
             <!-- Screen Reader Status -->
-            <template x-if="$userReaction">
+            <template x-if="{{ $userReaction ? 'true' : 'false' }}">
                 <div
                     role="status"
                     aria-live="polite"
                     class="sr-only"
-                    x-text="`You reacted with ${$userReaction}`"
+                    x-text="`You reacted with {{$userReaction}}`"
                 ></div>
             </template>
         </div>
@@ -132,7 +132,6 @@
                         @click.away="showList = false; $wire.call('closeReactionsList')"
                         id="reactions-dialog-{{ $this->modelId }}"
                         role="dialog"
-                        tabindex="-1"
                         aria-modal="true"
                         aria-labelledby="reactions-dialog-title-{{ $this->modelId }}"
                         aria-describedby="reactions-dialog-description-{{ $this->modelId }}"
@@ -159,7 +158,7 @@
                             ><button
                                     wire:click="filterReactionsByType(null)"
                                     class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap
-                                    {{ $selectedReactionFilter === null ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700' }}"
+                                    {{ $selectedReactionFilter === null ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400' }}"
                                 >
                                     <span>All</span>
                                     <span class="text-xs">{{ $this->totalReactions }}</span>
@@ -173,7 +172,8 @@
                                         <button
                                             type="button"
                                             wire:click="filterReactionsByType('{{ $type }}')"
-                                            class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap
+                                            @click="$focus.focus($el)"
+                                            class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
                                             {{ $selectedReactionFilter === $type ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700' }}"
                                             aria-pressed="{{ $selectedReactionFilter === $type ? 'true' : 'false' }}"
                                             aria-label="{{ __('Show :reaction reactions', ['reaction' => $config['label']]) }}"
@@ -201,8 +201,12 @@
                                                 @continue
                                             @endif
                                             @if(isset($reactionTypes[$reactionUser['type']]))
-                                                <div class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                                                <div
+                                                    tabindex="0"
+                                                    @keydown.escape.stop="console.log(111)"
+                                                    class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                                    <div
+                                                        class="flex items-center gap-3 min-w-0 flex-1">
                                                         <div class="flex-shrink-0">
                                                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
                                                                 {{ substr($reactionUser['user_name'], 0, 1) }}

@@ -18,7 +18,7 @@ class Reactions extends Component
 
     public array $reactions = [];
 
-    public ?string $userReaction = null;
+    public string $userReaction = '';
 
     public array $reactionTypes = [];
 
@@ -132,7 +132,7 @@ class Reactions extends Component
                 $userReaction = $model->reactions
                     ->firstWhere('user_id', auth()->id());
 
-                $this->userReaction = $userReaction?->type;
+                $this->userReaction = $userReaction ? $userReaction->type: '';
             }
         } else {
             // Fallback to querying if not eager loaded
