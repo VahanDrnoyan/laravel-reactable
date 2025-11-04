@@ -104,6 +104,7 @@ class Reactions extends Component
                 'user_name' => $reaction->user->name,
                 'type' => $reaction->type,
                 'created_at' => $reaction->created_at->diffForHumans(),
+                'user' => $reaction->user
             ])
             ->toArray();
         $this->isLoadingReactions = false;

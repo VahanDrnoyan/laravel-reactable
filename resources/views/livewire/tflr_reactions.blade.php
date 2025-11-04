@@ -210,9 +210,17 @@
                                                     <div
                                                         class="flex items-center gap-3 min-w-0 flex-1">
                                                         <div class="flex-shrink-0">
+                                                            @php
+                                                                $avatarField = config('reactable.avatar_field'); // e.g. 'profile.image'
+                                                                $avatarUrl = data_get($reactionUser['user'], $avatarField) ?? (method_exists($reactionUser['user'], 'getAvatarUrl') ? $reactionUser['user']->getAvatarUrl() : null);
+                                                            @endphp
+                                                            @if($avatarUrl)
+                                                            <img src="{{ $avatarUrl }}" alt="User {{$reactionUser->name}}" class="rounded-full w-10 h-10">
+                                                            @else
                                                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
                                                                 {{ substr($reactionUser['user_name'], 0, 1) }}
                                                             </div>
+                                                                @endif
                                                         </div>
                                                         <div class="flex-1 min-w-0">
                                                             <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
