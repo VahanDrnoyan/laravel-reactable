@@ -16,6 +16,7 @@ class ReactionFactory extends Factory
      * @return array<string, mixed>
      */
     protected $model = Reaction::class;
+
     public function definition(): array
     {
         return [
