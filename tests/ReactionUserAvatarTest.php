@@ -63,3 +63,4 @@ test('user model getAvatarUrl is called instead if config is null', function () 
         ->call('filterReactionsByType', 'love')
         ->assertSee('test_url');
 });
+// test
