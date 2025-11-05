@@ -197,22 +197,36 @@
                                 :aria-busy="$wire.isLoadingReactions"
                                 aria-label="{{ __('List of users who reacted with :reaction', ['reaction' => $reactionTypes[$selectedReactionFilter]['label'] ?? 'reactions']) }}"
                             >
+
                                 @if(count($reactionUsers) > 0)
+
                                     <div class="space-y-2">
                                         @foreach($reactionUsers as $reactionUser)
                                             @if(method_exists($this->getModel(), 'canReact') && !$this->getModel()->canReact($reactionUser['type']))
                                                 @continue
                                             @endif
+
+
                                             @if(isset($reactionTypes[$reactionUser['type']]))
+
                                                 <div
                                                     tabindex="0"
                                                     class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                                     <div
                                                         class="flex items-center gap-3 min-w-0 flex-1">
                                                         <div class="flex-shrink-0">
+
+                                                            @php
+                                                                $avatarField = config('reactable.avatar_field'); // e.g. 'profile.image'
+                                                                $avatarUrl = $avatarField ? data_get($reactionUser['user'], $avatarField) : ((method_exists($reactionUser['user'], 'getAvatarUrl') ? ($reactionUser['user']->getAvatarUrl()) : null));
+                                                                @endphp
+                                                            @if($avatarUrl)
+                                                            <img src="{{ $avatarUrl }}" alt="User {{$reactionUser['user_name']}}" class="rounded-full w-10 h-10">
+                                                            @else
                                                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
                                                                 {{ substr($reactionUser['user_name'], 0, 1) }}
                                                             </div>
+                                                                @endif
                                                         </div>
                                                         <div class="flex-1 min-w-0">
                                                             <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">

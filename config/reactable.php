@@ -66,5 +66,14 @@ return [
         // Show tooltips on hover
         'show_tooltips' => true,
     ],
+    /*
+   |--------------------------------------------------------------------------
+   | Avatar Field
+   |--------------------------------------------------------------------------
+   |
+   | Configure avatar path related to user model. THis will be displayed in users list.
+   |
+   */
+    'avatar_field' => 'profile.image_url',
 
 ];
