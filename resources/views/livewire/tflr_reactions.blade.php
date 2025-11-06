@@ -217,8 +217,7 @@
                                                         <div class="flex-shrink-0">
 
                                                             @php
-                                                                $avatarField = config('reactable.avatar_field'); // e.g. 'profile.image'
-                                                                $avatarUrl = $avatarField ? data_get($reactionUser['user'], $avatarField) : ((method_exists($reactionUser['user'], 'getAvatarUrl') ? ($reactionUser['user']->getAvatarUrl()) : null));
+                                                                $avatarUrl = $reactionUser['avatar_url'];
                                                                 @endphp
                                                             @if($avatarUrl)
                                                             <img src="{{ $avatarUrl }}" alt="User {{$reactionUser['user_name']}}" class="rounded-full w-10 h-10">
