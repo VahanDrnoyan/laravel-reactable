@@ -217,7 +217,7 @@
                                                         <div class="flex-shrink-0">
 
                                                             @php
-                                                                $avatarUrl = $avatarField = $reactionUser['avatar_url'];
+                                                                $avatarUrl = $reactionUser['avatar_url'];
                                                                 @endphp
                                                             @if($avatarUrl)
                                                             <img src="{{ $avatarUrl }}" alt="User {{$reactionUser['user_name']}}" class="rounded-full w-10 h-10">
