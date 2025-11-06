@@ -98,13 +98,14 @@ class Reactions extends Component
         if ($this->selectedReactionFilter) {
             $query->where('type', $this->selectedReactionFilter);
         }
+        $avatarField = config('reactable.avatar_field'); // e.g. 'profile.image'
 
         $this->reactionUsers = $query->paginate($this->perPage)
             ->map(fn ($reaction) => [
                 'user_name' => $reaction->user->name,
                 'type' => $reaction->type,
                 'created_at' => $reaction->created_at->diffForHumans(),
-                'user' => $reaction->user
+                'avatar_url' => $avatarField ? data_get($reaction->user, $avatarField) : (method_exists($reaction->user, 'getAvatarUrl') ? $reaction->user->getAvatarUrl() : null),
             ])
             ->toArray();
         $this->isLoadingReactions = false;
