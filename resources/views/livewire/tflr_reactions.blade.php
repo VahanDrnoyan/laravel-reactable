@@ -126,6 +126,7 @@
                 <!-- Reactions List Dropdown -->
                 <template x-teleport="body">
                     <div
+                        x-data="{ currentListType: null }"
                         x-show="showList"
                         x-trap.noscroll="showList"
                         x-cloak
@@ -137,8 +138,8 @@
                         aria-describedby="reactions-dialog-description-{{ $this->modelId }}"
                         @keydown.right="$focus.wrap().next()"
                         @keydown.left="$focus.wrap().previous()"
-                        @keydown.up="$focus.wrap().first()"
-                        @keydown.down="$focus.wrap().last()"
+                        @keydown.up="$focus.wrap().previous()"
+                        @keydown.down="$focus.wrap().next()"
 
                         @keydown.escape="showList = false; $wire.call('closeReactionsList')"
                         x-anchor.bottom-start.offset.8="$refs.countBtn"
@@ -159,7 +160,8 @@
                                 aria-label="{{ __('Filter reactions by type') }}"
                                 class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700"
                             ><button
-                                    wire:click="filterReactionsByType(null)"
+                                    wire:ignore.self
+                                    wire:click="filterReactionsByType(null); currentListType = 'all'"
                                     class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap
                                     {{ $selectedReactionFilter === null ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400' }}"
                                 >
@@ -174,8 +176,8 @@
                                     @if($reactions[$type] > 0)
                                         <button
                                             type="button"
-                                            wire:click="filterReactionsByType('{{ $type }}')"
-                                            @click="$focus.focus($el)"
+                                            wire:ignore.self
+                                            wire:click="filterReactionsByType('{{ $type }}'); currentListType = '{{ $type }}'"
                                             class="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
                                             {{ $selectedReactionFilter === $type ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700' }}"
                                             aria-pressed="{{ $selectedReactionFilter === $type ? 'true' : 'false' }}"
@@ -194,13 +196,16 @@
                                 class="p-3 max-h-96 overflow-y-scroll no-scrollbar"
                                 role="region"
                                 aria-live="polite"
+                                x-trap="currentListType ==='{{$selectedReactionFilter}}' || currentListType === 'all' "
+                                x-cloak
                                 :aria-busy="$wire.isLoadingReactions"
                                 aria-label="{{ __('List of users who reacted with :reaction', ['reaction' => $reactionTypes[$selectedReactionFilter]['label'] ?? 'reactions']) }}"
                             >
 
                                 @if(count($reactionUsers) > 0)
 
-                                    <div class="space-y-2">
+                                    <div class="space-y-2"
+                                    >
                                         @foreach($reactionUsers as $reactionUser)
                                             @if(method_exists($this->getModel(), 'canReact') && !$this->getModel()->canReact($reactionUser['type']))
                                                 @continue
@@ -211,6 +216,7 @@
 
                                                 <div
                                                     tabindex="0"
+                                                    @keydown.escape.stop="currentListType = null"
                                                     class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                                     <div
                                                         class="flex items-center gap-3 min-w-0 flex-1">
