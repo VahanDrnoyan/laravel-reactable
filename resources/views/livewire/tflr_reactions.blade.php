@@ -6,8 +6,8 @@
             <button
                 x-ref="likeBtn"
                 @keydown.escape="showPicker = false"
-                @mouseenter="showPicker = true"
-                @mouseleave="showPicker = false"
+                @mouseenter="setTimeout(() => showPicker = true, 100)"
+                @mouseleave="setTimeout(() => showPicker = false, 100)"
                 @click="showPicker = !showPicker"
                 @keydown.enter.space.prevent="showPicker = !showPicker"
                 type="button"
