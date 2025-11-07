@@ -129,7 +129,7 @@ public function index()
 In your Blade views:
 
 ```blade
-<livewire:tflr_reactions :model="$post" />
+<livewire:tflr_reactions :model="$post" wire:key="reaction-{{ $post->id }}" wire:lazy />
 ```
 
 **That's it!** The component will automatically:
