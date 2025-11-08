@@ -228,11 +228,12 @@ class Reactions extends Component
         }
 
         $model = $this->getModel();
-        $model->reactions()
+        $deleted = $model->reactions()
             ->where('user_id', auth()->id())
             ->delete();
-
-        $this->reactions[$this->userReaction]--;
+        if ($deleted) {
+            $this->reactions[$this->userReaction]--;
+        }
         $previousReaction = $this->userReaction;
         $this->userReaction = null;
 
