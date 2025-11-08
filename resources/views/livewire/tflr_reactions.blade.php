@@ -126,7 +126,6 @@
                 <!-- Reactions List Dropdown -->
                 <template x-teleport="body">
                     <div
-                        x-data="{ currentListType: null }"
                         x-show="showList"
                         x-trap.noscroll="showList"
                         x-cloak
