@@ -61,7 +61,7 @@
         <!-- Comments List -->
         <div class="space-y-3" role="region" aria-label="{{ __('Comments list') }}">
             @if(count($comments) > 0)
-                @foreach($comments as $comment)
+                @foreach($this->commentsWithModels as $comment)
                     <div 
                         wire:key="comment-{{ $comment['id'] }}"
                         class="flex gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
@@ -104,14 +104,9 @@
                             </div>
 
                             <!-- Comment Reactions (if enabled) -->
-                            @if(config('reactable.comments.enable_reactions', true))
+                            @if(config('reactable.comments.enable_reactions', true) && isset($comment['model']))
                                 <div class="mt-2 px-3">
-                                    @php
-                                        $commentModel = \TrueFans\LaravelReactable\Models\Comment::find($comment['id']);
-                                    @endphp
-                                    @if($commentModel)
-                                        <livewire:reactions :model="$commentModel" :key="'comment-reaction-'.$comment['id']" />
-                                    @endif
+                                    <livewire:reactions :model="$comment['model']" :key="'comment-reaction-'.$comment['id']" />
                                 </div>
                             @endif
                         </div>

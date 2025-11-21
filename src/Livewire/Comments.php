@@ -34,7 +34,7 @@ class Comments extends Component
         $this->model = $model;
         $this->modelType = get_class($model);
         $this->modelId = $model->id;
-        
+
         $this->loadCommentsCount();
     }
 
@@ -52,7 +52,7 @@ class Comments extends Component
     public function toggleComments(): void
     {
         $this->showComments = ! $this->showComments;
-        
+
         if ($this->showComments && empty($this->comments)) {
             $this->loadComments();
         }
@@ -61,14 +61,15 @@ class Comments extends Component
     public function loadComments(): void
     {
         $model = $this->getModel();
-        
+
         $commentsQuery = $model->comments()
-            ->with('user')
+            ->with(['user', 'reactions']) // Eager load reactions to prevent N+1
             ->latest()
             ->take($this->perPage);
 
         $allComments = $commentsQuery->get();
-        
+
+        // Store only IDs to avoid Livewire serialization N+1 issues
         $this->comments = $allComments->map(fn ($comment) => [
             'id' => $comment->id,
             'content' => $comment->content,
@@ -76,6 +77,7 @@ class Comments extends Component
             'user_id' => $comment->user_id,
             'created_at' => $comment->created_at->diffForHumans(),
             'can_delete' => auth()->check() && auth()->id() === $comment->user_id,
+            // Don't store the model - it causes N+1 on Livewire serialization
         ])->toArray();
 
         $this->hasMoreComments = $model->comments()->count() > $this->perPage;
@@ -91,6 +93,7 @@ class Comments extends Component
     {
         if (! auth()->check()) {
             $this->dispatch('show-login-modal');
+
             return;
         }
 
@@ -124,6 +127,7 @@ class Comments extends Component
             'user_id' => auth()->id(),
             'created_at' => 'just now',
             'can_delete' => true,
+            // Don't include model to avoid serialization N+1
         ]);
 
         $this->commentsCount++;
@@ -159,6 +163,32 @@ class Comments extends Component
                 'commentId' => $commentId,
             ]);
         }
+    }
+
+    /**
+     * Get comments with their models for rendering.
+     * Uses eager loading to prevent N+1 queries.
+     */
+    public function getCommentsWithModelsProperty()
+    {
+        if (empty($this->comments)) {
+            return [];
+        }
+
+        $commentIds = array_column($this->comments, 'id');
+
+        // Eager load comments with reactions in a single query
+        $commentModels = Comment::with(['reactions', 'user'])
+            ->whereIn('id', $commentIds)
+            ->get()
+            ->keyBy('id');
+
+        // Merge models with comment data
+        return collect($this->comments)->map(function ($comment) use ($commentModels) {
+            $comment['model'] = $commentModels->get($comment['id']);
+
+            return $comment;
+        })->toArray();
     }
 
     public function render()
