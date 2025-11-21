@@ -141,6 +141,70 @@ In your Blade views:
 
 ---
 
+## 💬 Comments System
+
+The package now includes a full-featured Facebook-style comments system with support for nested reactions!
+
+### Step 1: Publish Migration
+
+If you haven't already, publish the comments migration:
+
+```bash
+php artisan vendor:publish --provider="TrueFans\LaravelReactable\LaravelReactableServiceProvider"
+```
+
+Then run migrations:
+
+```bash
+php artisan migrate
+```
+
+### Step 2: Add Comments to Your Models
+
+Add the `HasComments` trait to any model you want to be commentable:
+
+```php
+use TrueFans\LaravelReactable\Traits\HasComments;
+use TrueFans\LaravelReactable\Traits\HasReactions; // Optional: if you want reactions on the post too
+
+class Post extends Model
+{
+    use HasComments;
+    use HasReactions;
+    
+    // Your model code...
+}
+```
+
+### Step 3: Display Comments Component
+
+In your Blade views:
+
+```blade
+<livewire:comments :model="$post" />
+```
+
+### Features
+
+- **📝 Full Commenting System** - Add and delete comments
+- **😍 Reactions on Comments** - Users can react to comments (enabled by default)
+- **⚡ Livewire Powered** - Real-time updates without page refresh
+- **🔄 Load More** - Pagination support for long comment threads
+- **🛡️ XSS Protection** - Built-in sanitization and validation
+- **🚀 Optimized** - Eager loading prevents N+1 queries
+
+### Configuration
+
+You can disable reactions on comments in `config/reactable.php`:
+
+```php
+'comments' => [
+    'enable_reactions' => true, // Set to false to disable
+],
+```
+
+---
+
 ## 🎨 Configuration
 
 ### Customize Reaction Types
