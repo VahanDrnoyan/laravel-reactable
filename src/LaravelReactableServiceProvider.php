@@ -6,6 +6,7 @@ use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use TrueFans\LaravelReactable\Commands\LaravelReactableCommand;
+use TrueFans\LaravelReactable\Livewire\Comments;
 use TrueFans\LaravelReactable\Livewire\Reactions;
 
 class LaravelReactableServiceProvider extends PackageServiceProvider
@@ -22,6 +23,7 @@ class LaravelReactableServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_reactions_table')
+            ->hasMigration('create_comments_table')
             ->hasCommand(LaravelReactableCommand::class);
     }
 
@@ -29,5 +31,8 @@ class LaravelReactableServiceProvider extends PackageServiceProvider
     {
         // Register Livewire components
         Livewire::component('tflr_reactions', Reactions::class);
+        Livewire::component('reactions', Reactions::class);
+        Livewire::component('tflr_comments', Comments::class);
+        Livewire::component('comments', Comments::class);
     }
 }

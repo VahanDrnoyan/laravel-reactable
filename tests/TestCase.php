@@ -34,11 +34,18 @@ class TestCase extends Orchestra
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
+            'foreign_key_constraints' => true,
         ]);
+
+        // Enable foreign key constraints for SQLite
+        $app['db']->connection()->statement('PRAGMA foreign_keys=ON');
 
         // Load package migrations
         $migration = include __DIR__.'/../database/migrations/create_reactions_table.php.stub';
         $migration->up();
+
+        $commentsMigration = include __DIR__.'/../database/migrations/create_comments_table.php.stub';
+        $commentsMigration->up();
 
         // Create users table for testing
         $app['db']->connection()->getSchemaBuilder()->create('users', function ($table) {

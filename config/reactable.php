@@ -66,14 +66,28 @@ return [
         // Show tooltips on hover
         'show_tooltips' => true,
     ],
+    
     /*
-   |--------------------------------------------------------------------------
-   | Avatar Field
-   |--------------------------------------------------------------------------
-   |
-   | Configure avatar path related to user model. THis will be displayed in users list.
-   |
-   */
+    |--------------------------------------------------------------------------
+    | Avatar Field
+    |--------------------------------------------------------------------------
+    |
+    | Configure avatar path related to user model. This will be displayed in users list.
+    |
+    */
     'avatar_field' => 'profile.image_url',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Comments Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configure comments functionality.
+    |
+    */
+    'comments' => [
+        // Enable reactions on comments (users can react to individual comments)
+        'enable_reactions' => true,
+    ],
 
 ];
