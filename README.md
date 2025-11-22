@@ -222,95 +222,9 @@ class Post extends Model
 }
 ```
 
-     * @param string $type The reaction type (e.g., 'like', 'love')
-     * @return bool Return false to hide the reaction and prevent interaction,
-     *              or true to show and allow the reaction
-     */
-    public function canReact(string $type): bool
-    {
-        // Example: Prevent users from reacting to their own posts
-        if (auth()->id() === $this->user_id) {
-            return false;
-        }
+---
 
-        // Example: Only allow 'like' and 'love' reactions
-        if (!in_array($type, ['like', 'love'])) {
-            return false;
-        }
-
-        // Example: Implement a cooldown period
-        $lastReaction = $this->reactions()
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->first();
-
-        if ($lastReaction && $lastReaction->created_at->gt(now()->subHour())) {
-            return false; // 1-hour cooldown between reactions
-        }
-
-        return true;
-    }
-}
-```
-
-### Events
-
-The component dispatches Livewire events:
-
-```javascript
-// Listen for reaction events
-Livewire.on('reaction-added', (data) => {
-    console.log('Reaction added:', data.type);
-});
-
-Livewire.on('reaction-removed', (data) => {
-    console.log('Reaction removed:', data.type);
-});
-```
-
-### Customizing the canReact Method
-
-The `canReact` method receives the reaction type as a parameter, allowing you to implement different rules for different reaction types. The method should return `true` if the reaction is allowed, or `false` to prevent it.
-
-#### Example: Role-Based Reaction Visibility
-
-```php
-public function canReact(string $type): bool
-{
-    // Hide all reactions for guests
-    if (!auth()->check()) {
-        return false;
-    }
-
-    // Only show premium reactions to premium users
-    $premiumReactions = ['love', 'laugh', 'wow', 'sad', 'angry'];
-    if (in_array($type, $premiumReactions) && !auth()->user()->isPremium()) {
-        return false;
-    }
-
-    // Hide 'angry' reactions on Sundays (example of conditional logic)
-    if ($type === 'angry' && now()->dayOfWeek === 0) {
-        return false;
-    }
-
-    return true;
-}
-```
-
-### Reaction Visibility vs Interaction
-
-- When `canReact` returns `false` for a reaction type:
-  - The reaction will be hidden from the reaction picker
-  - The reaction will not be available in the filter tabs
-  - Existing reactions of that type will be hidden from the reactions list
-  - Users cannot interact with or select the reaction
-
-- When `canReact` returns `true`:
-  - The reaction is visible in the picker
-  - The reaction appears in filter tabs (if any exist)
-  - Users can see and interact with the reaction
-
-### Avoiding N+1 Queries
+## 🎯 Advanced Usage
 
 **IMPORTANT:** Always eager load relationships when displaying multiple models with Reactions or Comments components.
 
