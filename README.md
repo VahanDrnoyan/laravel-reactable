@@ -1,40 +1,52 @@
 # Laravel Reactable
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/truefans/laravel-reactable.svg?style=flat-square)](https://packagist.org/packages/truefans/laravel-reactable) ![New in v1.1.0](https://img.shields.io/badge/NEW-infinite%20scrolling-4CAF50?style=flat-square)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/truefans/laravel-reactable.svg?style=flat-square)](https://packagist.org/packages/truefans/laravel-reactable)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/VahanDrnoyan/laravel-reactable/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/VahanDrnoyan/laravel-reactable/actions?query=workflow%3Atests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/truefans/laravel-reactable.svg?style=flat-square)](https://packagist.org/packages/truefans/laravel-reactable)
 
-A beautiful, Facebook-style reactions system for Laravel with Livewire. Add customizable emoji reactions (like, love, laugh, wow, sad, angry) to any model in your Laravel application with a single trait.
+A beautiful, Facebook-style reactions and comments system for Laravel with Livewire. Add customizable emoji reactions and full-featured commenting to any model in your Laravel application with a single trait.
 
 ## 📸 Demo
 
-### Reaction Picker (Light Theme)
-![Reaction Picker Demo](docs/images/demo1.png)
+### Reactions System
 
-### Reaction Picker (Dark Theme)
-![Reaction Picker Dark Demo](docs/images/demo2.png)
+**Light Theme**
+![Reaction Picker Light](docs/images/demo1.png)
 
-### Reactions List with Filters (Light Theme)
-![Reactions List Demo](docs/images/demo3.png)
+**Dark Theme**
+![Reaction Picker Dark](docs/images/demo2.png)
 
-### Reactions List with Filters (Dark Theme)
-![Reactions List Dark Demo](docs/images/demo4.png)
+### Comments System
+
+**Light Theme**
+![Comments Light](docs/images/demo5.png)
+
+**Dark Theme**
+![Comments Dark](docs/images/demo6.png)
 
 ## ✨ Features
 
+### Reactions
 - 🎭 **Facebook-Style UI** - Beautiful reaction picker with hover/click interactions
 - 🔥 **Livewire Powered** - Real-time reactions without page refresh
 - 📦 **Polymorphic Relations** - React to Posts, Comments, Images, or any model
 - 🎨 **Fully Customizable** - Configure reaction types, icons, colors via config
 - 👥 **User Reactions List** - See who reacted with filterable tabs by reaction type
-- ♾️ **Infinite Scrolling** - Seamlessly load more reactions as you scroll (v1.1.0+)
+- ♾️ **Infinite Scrolling** - Seamlessly load more reactions as you scroll
+
+### Comments
+- 💬 **Full Commenting System** - Add, edit, and delete comments
+- 😍 **Reactions on Comments** - Users can react to comments (configurable)
+- ✏️ **Inline Editing** - Edit comments with validation and XSS protection
+- 🗑️ **Custom Delete Modal** - Beautiful confirmation modal with Alpine.js
+- 🔄 **Load More Pagination** - Efficient pagination for long comment threads
+- 🛡️ **XSS Protection** - Built-in sanitization and validation
+
+### General
 - 🌙 **Dark Mode Support** - Beautiful UI in both light and dark themes
-- ⚡ **Optimized Queries** - Efficient database queries with proper indexing
-- 🔒 **Unique Reactions** - One reaction per user per item (can be changed)
+- ⚡ **Optimized Queries** - Eager loading prevents N+1 queries
 - 📱 **Responsive Design** - Works perfectly on mobile and desktop
-- 🎯 **Smart Positioning** - Intelligent dropdown placement with Alpine.js Anchor plugin
-- 🔄 **Auto-Flip** - Dropdowns automatically reposition to stay within viewport
-- ♿ **Accessibility First** - Full keyboard navigation, focus management, and ARIA attributes for screen readers
+- ♿ **Accessibility First** - Full keyboard navigation, focus management, and ARIA attributes
 
 ---
 
@@ -57,8 +69,6 @@ composer require truefans/laravel-reactable
 
 ### Step 2: Publish Assets
 
-Publish the migration, config, and views:
-
 ```bash
 php artisan vendor:publish --provider="TrueFans\LaravelReactable\LaravelReactableServiceProvider"
 ```
@@ -69,33 +79,13 @@ php artisan vendor:publish --provider="TrueFans\LaravelReactable\LaravelReactabl
 php artisan migrate
 ```
 
-This creates the `reactions` table with:
-- User ID
-- Polymorphic relationship (reactable_id, reactable_type)
-- Reaction type
-- Unique constraint (one reaction per user per item)
-- Optimized indexes
-
 ---
-
-## 🔄 Infinite Scrolling (v1.1.0+)
-
-Version 1.1.0 introduces infinite scrolling for the reactions list, providing a smoother user experience when viewing many reactions.
-
-### Key Features:
-- **Automatic Loading**: New reactions load automatically as you scroll down the list
-- **Loading Indicator**: Shows a subtle loading spinner when fetching more reactions
-- **Optimized Performance**: Loads in chunks to maintain performance
-- **Seamless Integration**: Works with all existing features including reaction filtering
-
-### How It Works:
-The reactions list now uses Laravel's pagination with Livewire's `x-intersect` to detect when the user scrolls to the bottom of the list. When triggered, it automatically loads the next set of reactions.
 
 ## 📖 Usage
 
-### Step 1: Add Reactions to Your Models
+### Reactions
 
-Add the `HasReactions` trait to any model you want to be reactable:
+**1. Add trait to your model:**
 
 ```php
 use TrueFans\LaravelReactable\Traits\HasReactions;
@@ -103,19 +93,14 @@ use TrueFans\LaravelReactable\Traits\HasReactions;
 class Post extends Model
 {
     use HasReactions;
-    
-    // Your model code...
 }
 ```
 
-### Step 2: Eager Load Reactions (Important!)
-
-**To prevent N+1 queries**, always eager load reactions in your controller:
+**2. Eager load in controller (prevents N+1 queries):**
 
 ```php
 public function index()
 {
-    // ✅ CORRECT - Eager load reactions
     $posts = Post::with(['user', 'reactions'])
         ->latest()
         ->paginate(10);
@@ -124,261 +109,119 @@ public function index()
 }
 ```
 
-### Step 3: Display the Reactions Component
-
-In your Blade views:
+**3. Display in Blade:**
 
 ```blade
-<livewire:tflr_reactions :model="$post" wire:key="reaction-{{ $post->id }}" wire:lazy />
+<livewire:tflr_reactions :model="$post" :key="'post-reactions-'.$post->id" />
 ```
 
-**That's it!** The component will automatically:
-- Detect eager-loaded data and use it (no additional queries)
-- Display a "Like" button (or current reaction if user has reacted)
-- Show reaction picker on hover with all available reactions
-- Display reaction count summary with top 3 reaction icons
-- Show clickable reaction count with filterable tabs by reaction type
+### Comments
 
----
-
-## 💬 Comments System
-
-The package now includes a full-featured Facebook-style comments system with support for nested reactions!
-
-### Step 1: Publish Migration
-
-If you haven't already, publish the comments migration:
-
-```bash
-php artisan vendor:publish --provider="TrueFans\LaravelReactable\LaravelReactableServiceProvider"
-```
-
-Then run migrations:
-
-```bash
-php artisan migrate
-```
-
-### Step 2: Add Comments to Your Models
-
-Add the `HasComments` trait to any model you want to be commentable:
+**1. Add trait to your model:**
 
 ```php
 use TrueFans\LaravelReactable\Traits\HasComments;
-use TrueFans\LaravelReactable\Traits\HasReactions; // Optional: if you want reactions on the post too
 
 class Post extends Model
 {
     use HasComments;
-    use HasReactions;
-    
-    // Your model code...
 }
 ```
 
-### Step 3: Display Comments Component
+**2. Eager load comment counts (prevents N+1 queries):**
 
-In your Blade views:
+```php
+public function index()
+{
+    $posts = Post::with(['user', 'reactions'])
+        ->withCount('comments')  // Important for performance!
+        ->latest()
+        ->paginate(10);
 
-```blade
-<livewire:comments :model="$post" />
+    return view('posts.index', compact('posts'));
+}
 ```
 
-### Features
+**3. Display in Blade:**
 
-- **📝 Full Commenting System** - Add and delete comments
-- **😍 Reactions on Comments** - Users can react to comments (enabled by default)
-- **⚡ Livewire Powered** - Real-time updates without page refresh
-- **🔄 Load More** - Pagination support for long comment threads
-- **🛡️ XSS Protection** - Built-in sanitization and validation
-- **🚀 Optimized** - Eager loading prevents N+1 queries
+```blade
+<livewire:tflr_comments :model="$post" :key="'post-comments-'.$post->id" />
+```
 
 ### Configuration
 
-You can disable reactions on comments in `config/reactable.php`:
-
-```php
-'comments' => [
-    'enable_reactions' => true, // Set to false to disable
-],
-```
-
----
-
-## 🎨 Configuration
-
-### Customize Reaction Types
-
-Edit `config/reactable.php`:
+Customize reactions and enable/disable features in `config/reactable.php`:
 
 ```php
 return [
     'reaction_types' => [
-        'like' => [
-            'icon' => '👍',
-            'label' => 'Like',
-            'color' => 'blue',
-        ],
-        'love' => [
-            'icon' => '❤️',
-            'label' => 'Love',
-            'color' => 'red',
-        ],
-        'laugh' => [
-            'icon' => '😂',
-            'label' => 'Laugh',
-            'color' => 'yellow',
-        ],
-        'wow' => [
-            'icon' => '😮',
-            'label' => 'Wow',
-            'color' => 'purple',
-        ],
-        'sad' => [
-            'icon' => '😢',
-            'label' => 'Sad',
-            'color' => 'gray',
-        ],
-        'angry' => [
-            'icon' => '😠',
-            'label' => 'Angry',
-            'color' => 'orange',
-        ],
+        'like' => ['icon' => '👍', 'label' => 'Like', 'color' => 'blue'],
+        'love' => ['icon' => '❤️', 'label' => 'Love', 'color' => 'red'],
         // Add your own custom reactions!
-        'fire' => [
-            'icon' => '🔥',
-            'label' => 'Fire',
-            'color' => 'orange',
-        ],
     ],
-
-    'display' => [
-        'show_breakdown' => true,  // Show detailed reaction breakdown
-        'show_total' => true,      // Show total reaction count
-        'show_tooltips' => true,   // Show tooltips on hover
+    
+    'comments' => [
+        'enable_reactions' => true, // Allow reactions on comments
     ],
 ];
 ```
 
 ---
 
-## ♿ Accessibility
-
-We've made significant improvements to ensure the reaction picker and dropdowns are fully accessible:
-
-### Keyboard Navigation
-- **Tab Navigation**: All interactive elements are properly included in the tab order
-- **Arrow Keys**: Navigate between reaction options using left/right arrow keys
-- **Enter/Space**: Select the currently focused reaction
-- **Escape**: Close the reaction picker or dropdown
-
-### Focus Management
-- **Focus Trapping**: When any dropdown is open, focus is trapped within the component
-- **Focus Wrapping**: Navigation wraps around when reaching the start/end of the focusable elements
-- **Focus Return**: Focus returns to the trigger button when the dropdown is closed
-- **Visible Focus**: Clear visual indicators for focused elements
-
-### Dropdown Navigation
-- **Reaction Picker**:
-  - `→` Move focus to the next reaction
-  - `←` Move focus to the previous reaction
-  - `Escape` Close the picker
-  
-- **Reactions List**:
-  - `→` Move focus to the next reaction filter tab
-  - `←` Move focus to the previous reaction filter tab
-  - `Escape` Close the list
-
-### Screen Reader Support
-- All interactive elements have proper ARIA attributes
-- Focus management ensures screen readers announce changes correctly
-- Buttons and controls have appropriate labels and roles
-
+## 🎯 Advanced Usage
 
 ### Trait Methods
 
 The `HasReactions` trait provides these methods:
 
 ```php
-// Get all reactions relationship
-$post->reactions();
-
-// Add a reaction
+// Add/remove reactions
 $post->react('like', $user);  // User defaults to auth()->user()
-
-// Remove a reaction
 $post->unreact($user);
 
-// Check if user has reacted
+// Check reactions
 $post->hasReactedBy($user);  // Returns bool
-
-// Get user's reaction type
 $post->getReactionBy($user);  // Returns 'like', 'love', etc. or null
 
-// Get reactions summary
+// Get counts
 $post->getReactionsSummary();  // Returns ['like' => 5, 'love' => 3, ...]
-
-// Get total reactions count
 $post->getTotalReactionsCount();  // Returns int
-
-// Get count for specific reaction type
 $post->getReactionsCountByType('like');  // Returns int
 ```
 
-### Facade Methods
-
-Use the `LaravelReactable` facade for helper methods:
+The `HasComments` trait provides these methods:
 
 ```php
-use TrueFans\LaravelReactable\Facades\LaravelReactable;
+// Add/remove comments
+$post->addComment('Great post!', $user);
+$post->removeComment($commentId, $user);
 
-// Get all reaction types
-LaravelReactable::getReactionTypes();
-
-// Get specific reaction config
-LaravelReactable::getReactionConfig('like');
-
-// Validate reaction type
-LaravelReactable::isValidReaction('like');  // Returns bool
-
-// Get reaction type keys
-LaravelReactable::getReactionTypeKeys();  // Returns ['like', 'love', ...]
-
-// Get display settings
-LaravelReactable::getDisplaySettings();
+// Check comments
+$post->hasCommentedBy($user);  // Returns bool
+$post->comments()->count();  // Get total comments
 ```
-
----
-
-## 🎯 Advanced Usage
 
 ### Custom Reaction Permissions
 
-The `canReact` method gives you complete control over reaction visibility and interaction in your application. It serves two main purposes:
-
-1. **Visibility Control**: Determines if a specific reaction type should be shown to the current user
-2. **Interaction Control**: Determines if the user can interact with (click/select) a specific reaction type
-
-This is useful for implementing business rules like:
-- Showing/hiding specific reactions based on user roles or permissions
-- Preventing users from reacting to their own content
-- Implementing cooldown periods between reactions
-- Creating premium/exclusive reactions for specific user groups
-- Temporarily disabling certain reaction types
-- Implementing feature flags for reactions
-
-#### Example: Prevent Users from Reacting to Their Own Posts
+Override the `canReact` method in your model to control who can react:
 
 ```php
-use TrueFans\LaravelReactable\Traits\HasReactions;
-
 class Post extends Model
 {
     use HasReactions;
     
-    /**
-     * Control reaction visibility and interaction
-     * 
+    public function canReact(string $type): bool
+    {
+        // Prevent users from reacting to their own posts
+        if (auth()->id() === $this->user_id) {
+            return false;
+        }
+        
+        return true;
+    }
+}
+```
+
      * @param string $type The reaction type (e.g., 'like', 'love')
      * @return bool Return false to hide the reaction and prevent interaction,
      *              or true to show and allow the reaction
