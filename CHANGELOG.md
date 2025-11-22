@@ -1,8 +1,32 @@
 # Changelog
 
 All notable changes to `laravel-reactable` will be documented in this file.
+## [2.1.0] - 2025-11-22
 
-## [1.1.6] - 2024-10-19
+### 🎉 Major Feature: Comments System
+
+We are excited to introduce a full-featured, Facebook-style comments system that integrates seamlessly with the existing reactions!
+
+#### 💬 Comments Features
+- **Full CRUD Operations** - Add, edit, and delete comments with real-time updates
+- **Inline Editing** - Seamless inline editing experience with validation
+- **Nested Reactions** - Users can react to comments just like they react to posts
+- **Load More Pagination** - Efficient pagination for long comment threads
+- **Custom Delete Modal** - Beautiful, accessible confirmation modal using Alpine.js
+- **XSS Protection** - Built-in sanitization and validation for security
+
+#### 🛠 Technical Improvements
+- **HasComments Trait** - Easily add commenting capability to any model
+- **Optimized Performance** - Eager loading support (`withCount('comments')`) to prevent N+1 queries
+- **Alpine.js Integration** - Enhanced UI interactions including focus trapping and modal management
+- **Comprehensive Testing** - New test suite covering all comment functionalities
+
+#### 📚 Documentation
+- **New Demo Images** - Added visual demos for the comments system in light and dark modes
+- **Streamlined README** - Reorganized and simplified documentation for better readability
+- **Updated Usage Guide** - Clear instructions for implementing the comments system
+
+
 
 ### 🚀 Performance & Accessibility Improvements
 

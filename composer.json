@@ -1,7 +1,7 @@
 {
     "name": "truefans/laravel-reactable",
     "description": "Reusable user likes, reactions full stack implementation.",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "keywords": [
         "TrueFans",
         "laravel",
