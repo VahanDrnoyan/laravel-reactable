@@ -34,14 +34,31 @@ class Reactions extends Component
 
     public $perPage = 7;
 
-    public function mount(Model $model): void
+    public function mount($model = null, ?string $modelType = null, ?int $modelId = null): void
     {
-        $this->model = $model;
-        $this->modelType = get_class($model);
-        $this->modelId = $model->id;
-        $this->reactionTypes = config('reactable.reaction_types', []);
+        // If a full model is provided, use it directly (no query needed)
+        // This is used for Posts where we already have the model with eager-loaded reactions
+        if ($model !== null) {
+            $this->model = $model;
+            $this->modelType = get_class($model);
+            $this->modelId = $model->id;
+        }
+        // Otherwise, fetch using modelType and modelId
+        // This is used for Comments to avoid loading full Comment models
+        elseif ($modelType !== null && $modelId !== null) {
+            $this->modelType = $modelType;
+            $this->modelId = $modelId;
+            $this->model = $modelType::find($modelId);
 
-        $this->loadReactions($model);
+            if (! $this->model) {
+                throw new \Exception("Model not found: {$modelType} #{$modelId}");
+            }
+        } else {
+            throw new \Exception('Either model or (modelType + modelId) must be provided');
+        }
+
+        $this->reactionTypes = config('reactable.reaction_types', []);
+        $this->loadReactions($this->model);
     }
 
     public function loadMore(): void

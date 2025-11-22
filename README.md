@@ -469,7 +469,11 @@ public function canReact(string $type): bool
 
 ### Avoiding N+1 Queries
 
-**IMPORTANT:** To prevent N+1 query issues when displaying multiple posts with reactions, always eager load the reactions relationship:
+**CRITICAL:** To prevent N+1 query issues, you **must** eager load relationships when displaying multiple models with Reactions or Comments components.
+
+#### For Reactions Component
+
+Always eager load the `reactions` relationship:
 
 ```php
 // ✅ CORRECT - Eager load reactions to avoid N+1
@@ -477,33 +481,152 @@ $posts = Post::with(['user', 'reactions'])
     ->latest()
     ->paginate(10);
 
-// ❌ WRONG - Will cause N+1 queries
+// ❌ WRONG - Will cause N+1 queries (1 query per post)
 $posts = Post::with('user')
     ->latest()
     ->paginate(10);
 ```
 
 **How It Works:**
-- The Livewire component automatically detects if reactions are eager loaded
+- The Reactions component automatically detects if reactions are eager loaded
 - If eager loaded: Uses the collection data (0 additional queries)
 - If not eager loaded: Falls back to querying (causes N+1)
 
-**Example Controller:**
-```php
-public function index()
-{
-    $posts = Post::with(['user', 'reactions'])
-        ->whereNotNull('published_at')
-        ->latest('published_at')
-        ->paginate(10);
+**Query Optimization:**
+- **Without eager loading:** 1 + (N posts × 3 queries each) = 31+ queries for 10 posts
+- **With eager loading:** 3 queries total (posts, users, reactions)
 
-    return view('posts.index', compact('posts'));
+#### For Comments Component
+
+Always eager load the `comments` count using `withCount()`:
+
+```php
+// ✅ CORRECT - Eager load comment counts
+$posts = Post::with(['user', 'reactions'])
+    ->withCount('comments')  // Adds comments_count attribute
+    ->latest()
+    ->paginate(10);
+
+// ❌ WRONG - Will cause N+1 queries for comment counts
+$posts = Post::with(['user', 'reactions'])
+    ->latest()
+    ->paginate(10);
+```
+
+**How It Works:**
+- `withCount('comments')` adds a `comments_count` attribute to each model
+- The Comments component checks for this attribute first
+- If available: Uses the cached count (0 additional queries)
+- If not available: Falls back to querying (causes N+1)
+
+#### Complete Example Controller
+
+Here's a complete example showing best practices for both components:
+
+```php
+use App\Models\Post;
+use Illuminate\View\View;
+
+class PostController extends Controller
+{
+    public function index(): View
+    {
+        $posts = Post::with(['user', 'reactions'])
+            ->withCount('comments')
+            ->whereNotNull('published_at')
+            ->latest('published_at')
+            ->paginate(10);
+
+        return view('posts.index', compact('posts'));
+    }
+
+    public function show(Post $post): View
+    {
+        $post->load('user');
+        $post->loadCount('comments');
+
+        return view('posts.show', compact('post'));
+    }
 }
 ```
 
-**Query Optimization:**
-- **Without eager loading:** 1 + (N posts × 2 queries) = 21+ queries for 10 posts
-- **With eager loading:** 3 queries total (posts, users, reactions)
+#### Blade Template Example
+
+```blade
+@foreach($posts as $post)
+    <div class="post-card">
+        <h2>{{ $post->title }}</h2>
+        <p>{{ $post->content }}</p>
+
+        {{-- Reactions Component (uses eager-loaded reactions) --}}
+        <livewire:reactions :model="$post" :key="'post-reactions-'.$post->id" />
+
+        {{-- Comments Component (uses eager-loaded comments_count) --}}
+        <livewire:comments :model="$post" :key="'post-comments-'.$post->id" />
+    </div>
+@endforeach
+```
+
+#### Performance Comparison
+
+**Without Eager Loading (N+1 Issue):**
+```
+1. SELECT * FROM posts                           (1 query)
+2. SELECT * FROM reactions WHERE reactable_id = 1 (10 queries, 1 per post)
+3. SELECT COUNT(*) FROM comments WHERE ...        (10 queries, 1 per post)
+4. SELECT * FROM comments WHERE ...               (10 queries when opened)
+5. SELECT * FROM reactions WHERE reactable_type = Comment (30+ queries for comment reactions)
+
+Total: 60+ queries for 10 posts
+```
+
+**With Proper Eager Loading:**
+```
+1. SELECT * FROM posts                           (1 query)
+2. SELECT * FROM users WHERE id IN (...)         (1 query)
+3. SELECT * FROM reactions WHERE reactable_id IN (...) (1 query)
+4. SELECT reactable_id, COUNT(*) FROM comments GROUP BY ... (1 query)
+
+Total: 4 queries for 10 posts
+```
+
+#### Advanced: Eager Loading Comment Reactions
+
+If you want to display comments with their reactions immediately (without lazy loading), you can eager load them:
+
+```php
+// This is handled automatically by the Comments component
+// Comments are loaded with reactions when the user expands the comments section
+// No additional configuration needed!
+```
+
+The Comments component uses a computed property that automatically eager loads Comment models with their reactions in a single `whereIn` query when the comments section is expanded.
+
+#### Troubleshooting N+1 Issues
+
+If you're experiencing slow page loads, use Laravel Debugbar or Telescope to check for N+1 queries:
+
+```bash
+# Install Laravel Debugbar (development only)
+composer require barryvdh/laravel-debugbar --dev
+
+# Or use Laravel Telescope
+composer require laravel/telescope
+php artisan telescope:install
+php artisan migrate
+```
+
+**Common Signs of N+1 Issues:**
+- Multiple identical queries with different IDs
+- Query count increases with number of posts
+- Queries like `SELECT * FROM reactions WHERE reactable_id = X` repeated many times
+
+**Solution Checklist:**
+- ✅ Use `with(['reactions'])` for Reactions component
+- ✅ Use `withCount('comments')` for Comments component  
+- ✅ Verify eager loading in Laravel Debugbar/Telescope
+- ✅ Check that query count stays constant regardless of post count
+
 
 ### Database Queries
 
