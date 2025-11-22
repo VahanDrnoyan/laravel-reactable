@@ -12,9 +12,11 @@ A beautiful, Facebook-style reactions and comments system for Laravel with Livew
 
 **Light Theme**
 ![Reaction Picker Light](docs/images/demo1.png)
+![Reaction Picker Light](docs/images/demo3.png)
 
 **Dark Theme**
 ![Reaction Picker Dark](docs/images/demo2.png)
+![Reaction Picker Light](docs/images/demo4.png)
 
 ### Comments System
 
